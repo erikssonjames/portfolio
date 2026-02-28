@@ -39,7 +39,7 @@ COPY package.json ./
 COPY --from=builder /app/prisma ./prisma
 COPY --from=builder /app/prisma.config.ts ./prisma.config.ts
 
-CMD ["sh", "-lc", "npx prisma migrate deploy && npm run db:seed"]
+CMD ["sh", "-lc", "ls -la prisma.config.ts prisma/schema.prisma && echo DB_URL_SET=${DATABASE_URL:+yes} && npx prisma migrate deploy --config=./prisma.config.ts --schema=./prisma/schema.prisma && npm run db:seed"]
 
 # ---- runner ----
 FROM node:20-alpine AS runner

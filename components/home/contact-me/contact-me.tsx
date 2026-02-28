@@ -1,19 +1,15 @@
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
-import { Textarea } from "@/components/ui/textarea"
 import { Badge } from "@/components/ui/badge"
 import { Separator } from "@/components/ui/separator"
 import { Mail, ArrowUpRight, Github, Linkedin } from "lucide-react"
 import { CopyEmailButton } from "./copy-email-button"
-import { env } from "@/config/env"
+import { getPublicEnv } from "@/config/env"
 import Link from "next/link"
-import { sendContactEmail } from "@/lib/send-email"
 import { ContactMeForm } from "./contact-me-form"
 
 export function ContactMe() {
-  const email = env.EMAIL;
+  const { EMAIL, GITHUB_LINK, LINKED_IN_LINK } = getPublicEnv()
 
   return (
     <section id="contact" className="relative overflow-hidden text-zinc-100">
@@ -57,7 +53,7 @@ export function ContactMe() {
 
           <div className="flex items-center gap-2">
             <Link 
-              href={env.GITHUB_LINK} 
+              href={GITHUB_LINK} 
               target="_blank"
             >
               <Button
@@ -70,7 +66,7 @@ export function ContactMe() {
               </Button>
             </Link>
             <Link 
-              href={env.LINKED_IN_LINK}
+              href={LINKED_IN_LINK}
               target="_blank"
             >
               <Button
@@ -100,14 +96,14 @@ export function ContactMe() {
                   <p className="text-zinc-200">Email</p>
                   <div className="flex justify-between">
                     <a
-                      href={`mailto:${email}`}
+                      href={`mailto:${EMAIL}`}
                       className="mt-1 inline-flex items-center gap-2 text-yellow-200 hover:text-yellow-100"
                     >
                       <Mail className="h-4 w-4" />
-                      {email}
+                      {EMAIL}
                       <ArrowUpRight className="h-4 w-4" />
                     </a>
-                    <CopyEmailButton email={email} />
+                    <CopyEmailButton email={EMAIL} />
                   </div>
                 </div>
 

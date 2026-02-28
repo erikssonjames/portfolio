@@ -1,33 +1,27 @@
-import * as z from 'zod';
-import 'dotenv/config';
+import * as z from "zod";
 
-const createEnv = () => {
-  const EnvSchema = z.object({
-    EMAIL: z.string(),
-    GITHUB_LINK: z.string(),
-    LINKED_IN_LINK: z.string()
-  });
+const EnvSchema = z.object({
+  EMAIL: z.string().min(1),
+  GITHUB_LINK: z.string().min(1),
+  LINKED_IN_LINK: z.string().min(1),
+});
 
+export function getPublicEnv() {
   const envVars = {
     EMAIL: process.env.NEXT_PUBLIC_EMAIL,
     GITHUB_LINK: process.env.NEXT_PUBLIC_GITHUB,
     LINKED_IN_LINK: process.env.NEXT_PUBLIC_LINKED_IN,
   };
 
-  const parsedEnv = EnvSchema.safeParse(envVars);
+  const parsed = EnvSchema.safeParse(envVars);
 
-  if (!parsedEnv.success) {
+  if (!parsed.success) {
+    // Keep it readable without pulling in extra helpers
     throw new Error(
-      `Invalid env provided.
-  The following variables are missing or invalid:
-  ${Object.entries(z.treeifyError(parsedEnv.error))
-    .map(([k, v]) => `- ${k}: ${v}`)
-    .join('\n')}
-  `,
+      "Invalid env provided: " +
+        parsed.error.issues.map((i) => `${i.path.join(".")}: ${i.message}`).join(", "),
     );
   }
 
-  return parsedEnv.data ?? {};
-};
-
-export const env = createEnv();
+  return parsed.data;
+}

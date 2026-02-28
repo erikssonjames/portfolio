@@ -13,7 +13,6 @@ FROM node:20-alpine AS builder
 WORKDIR /app
 COPY --from=deps /app/node_modules ./node_modules
 COPY . .
-COPY prisma ./prisma
 
 ARG NEXT_PUBLIC_EMAIL
 ARG NEXT_PUBLIC_GITHUB
@@ -40,6 +39,9 @@ ENV PORT=3000
 COPY --from=builder /app/.next/standalone ./
 COPY --from=builder /app/.next/static ./.next/static
 COPY --from=builder /app/public ./public
+
+COPY --from=builder /app/prisma ./prisma
+COPY --from=builder /app/node_modules ./node_modules
 
 EXPOSE 3000
 CMD ["node", "server.js"]

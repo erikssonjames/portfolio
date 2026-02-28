@@ -1,6 +1,5 @@
 "use client";
 
-import { randomize } from "./lib/gol";
 import { GameOfLifeSettingsPanel } from "./game-of-life-settings";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuPortal, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { Button } from "@/components/ui/button";

@@ -33,7 +33,6 @@ export function GameOfLifeCanvas() {
   const effectsRef = useRef<ClickEffect[]>([]);
   const isPlayingRef = useRef(true);
 
-  // probes (for alive/dead colors you already had via Tailwind)
   const aliveProbeRef = useRef<HTMLDivElement | null>(null);
   const deadProbeRef = useRef<HTMLDivElement | null>(null);
   const baseColorsRef = useRef({
@@ -70,10 +69,10 @@ export function GameOfLifeCanvas() {
 
     if (s.theme === "mono") {
       // luminance -> grayscale
-      const lumAlive = Math.round(0.2126 * baseAlive.r + 0.7152 * baseAlive.g + 0.0722 * baseAlive.b);
+      // const lumAlive = Math.round(0.2126 * baseAlive.r + 0.7152 * baseAlive.g + 0.0722 * baseAlive.b);
       const lumDead = Math.round(0.2126 * baseDead.r + 0.7152 * baseDead.g + 0.0722 * baseDead.b);
 
-      const alive = { r: lumAlive, g: lumAlive, b: lumAlive };
+      // const alive = { r: lumAlive, g: lumAlive, b: lumAlive };
       const dead = { r: lumDead, g: lumDead, b: lumDead };
 
       // push alive brighter so it pops
@@ -82,7 +81,6 @@ export function GameOfLifeCanvas() {
     }
 
     // neon
-    // target neon color palette (cyan/pink blend), mixed with base alive so it still respects your theme a bit
     const neonA = { r: 34, g: 211, b: 238 }; // cyan-400-ish
     const neonB = { r: 244, g: 114, b: 182 }; // pink-400-ish
     const neonMix = mix(neonA, neonB, 0.45);
@@ -205,15 +203,13 @@ export function GameOfLifeCanvas() {
     settingsRef.current = settings;
   }, [settings]);
 
-  // Controls
   useEffect(() => {
     isPlayingRef.current = isPlaying;
   }, [isPlaying]);
 
-  // rebuild when cell size changes
   useEffect(() => {
     rebuild();
-  }, [settings.cellSize]);
+  }, [settings.cellSize, rebuild]);
 
   useEffect(() => {
     const canvas = canvasRef.current;
@@ -375,7 +371,7 @@ export function GameOfLifeCanvas() {
 
   useEffect(() => {
     restart();
-  }, [restartToken]);
+  }, [restartToken, restart]);
 
   useEffect(() => {
     const b = currentRef.current;
@@ -406,9 +402,8 @@ export function GameOfLifeCanvas() {
     window.addEventListener("pointermove", onMove, { capture: true });
 
     return () => {
-      window.removeEventListener("pointermove", onMove, { capture: true } as any);
+      window.removeEventListener("pointermove", onMove, { capture: true });
     };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   return (

@@ -25,7 +25,7 @@ jobs:
 
       - name: Compute tag
         id: vars
-        run: echo "TAG=master-${GITHUB_SHA:0:7}-$(date +%s)" >> $GITHUB_OUTPUT
+        run: echo "TAG=master-$(date +%s)-${GITHUB_SHA:0:7}" >> $GITHUB_OUTPUT
 
       - name: Build & push
         uses: docker/build-push-action@v6

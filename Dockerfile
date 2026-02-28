@@ -29,6 +29,26 @@ ENV DATABASE_URL=$DATABASE_URL
 RUN npx prisma generate
 RUN npm run build
 
+# ---- migrator ----
+FROM node:20-alpine AS migrator
+WORKDIR /app
+ENV NODE_ENV=production
+
+# bring dependencies (includes tsx if it was installed in deps)
+COPY --from=deps /app/node_modules ./node_modules
+
+# bring package.json for npm scripts
+COPY package.json ./
+
+# bring prisma folder (schema, migrations, seed.ts)
+COPY --from=builder /app/prisma ./prisma
+
+# If seed imports your app code, copy what it needs too, e.g.:
+# COPY --from=builder /app/src ./src
+# COPY --from=builder /app/lib ./lib
+
+CMD ["sh", "-lc", "npx prisma migrate deploy && npm run db:seed"]
+
 # ---- runner ----
 FROM node:20-alpine AS runner
 WORKDIR /app
@@ -39,9 +59,7 @@ ENV PORT=3000
 COPY --from=builder /app/.next/standalone ./
 COPY --from=builder /app/.next/static ./.next/static
 COPY --from=builder /app/public ./public
-
 COPY --from=builder /app/prisma ./prisma
-COPY --from=builder /app/node_modules ./node_modules
 
 EXPOSE 3000
 CMD ["node", "server.js"]

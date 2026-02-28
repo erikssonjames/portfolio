@@ -37,3 +37,15 @@ jobs:
             NEXT_PUBLIC_EMAIL=${{ vars.NEXT_PUBLIC_EMAIL }}
             NEXT_PUBLIC_GITHUB=${{ vars.NEXT_PUBLIC_GITHUB }}
             NEXT_PUBLIC_LINKED_IN=${{ vars.NEXT_PUBLIC_LINKED_IN }}
+      
+      - name: Build & Push (migrator)
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          push: true
+          target: migrator
+          tags: ghcr.io.erikssonjames/portfolio-migrator:${{ steps.vars.outputs.TAG }}
+          build-args: |
+            NEXT_PUBLIC_EMAIL=${{ vars.NEXT_PUBLIC_EMAIL }}
+            NEXT_PUBLIC_GITHUB=${{ vars.NEXT_PUBLIC_GITHUB }}
+            NEXT_PUBLIC_LINKED_IN=${{ vars.NEXT_PUBLIC_LINKED_IN }}

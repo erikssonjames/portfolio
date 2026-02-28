@@ -13,6 +13,7 @@ FROM node:20-alpine AS builder
 WORKDIR /app
 COPY --from=deps /app/node_modules ./node_modules
 COPY . .
+COPY prisma ./prisma
 
 ARG NEXT_PUBLIC_EMAIL
 ARG NEXT_PUBLIC_GITHUB

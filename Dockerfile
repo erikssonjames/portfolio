@@ -34,18 +34,10 @@ FROM node:20-alpine AS migrator
 WORKDIR /app
 ENV NODE_ENV=production
 
-# bring dependencies (includes tsx if it was installed in deps)
 COPY --from=deps /app/node_modules ./node_modules
-
-# bring package.json for npm scripts
 COPY package.json ./
-
-# bring prisma folder (schema, migrations, seed.ts)
 COPY --from=builder /app/prisma ./prisma
-
-# If seed imports your app code, copy what it needs too, e.g.:
-# COPY --from=builder /app/src ./src
-# COPY --from=builder /app/lib ./lib
+COPY --from=builder /app/prisma.config.ts ./prisma.config.ts
 
 CMD ["sh", "-lc", "npx prisma migrate deploy && npm run db:seed"]
 

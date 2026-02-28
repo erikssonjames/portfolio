@@ -32,5 +32,8 @@ jobs:
         with:
           context: .
           push: true
-          tags: |
-            ghcr.io/erikssonjames/portfolio:${{ steps.vars.outputs.TAG }}
+          tags: ghcr.io/erikssonjames/portfolio:${{ steps.vars.outputs.TAG }}
+          build-args: |
+            NEXT_PUBLIC_EMAIL=${{ vars.NEXT_PUBLIC_EMAIL }}
+            NEXT_PUBLIC_GITHUB=${{ vars.NEXT_PUBLIC_GITHUB }}
+            NEXT_PUBLIC_LINKED_IN=${{ vars.NEXT_PUBLIC_LINKED_IN }}

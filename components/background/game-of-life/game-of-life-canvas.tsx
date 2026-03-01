@@ -149,35 +149,11 @@ export function GameOfLifeCanvas() {
 
     if (cx < 0 || cy < 0 || cx >= cols || cy >= rows) return;
 
-    if (paintRef.current.isDown) {
-      const now = performance.now();
-      if (now - paintRef.current.lastPaintAt < 20) return;
-      paintRef.current.lastPaintAt = now;
-
-      const heldMs = now - paintRef.current.startedAt;
-      const radius = Math.min(s.brushMaxRadius, 3 + Math.floor(heldMs / s.brushGrowthMs));
-      const density = Math.max(0.18, s.brushDensity - radius * 0.03);
-
-      stampSparseDisc({
-        board,
-        cols,
-        rows,
-        cx,
-        cy,
-        radius,
-        density,
-        seed: (now | 0) ^ (cx * 73856093) ^ (cy * 19349663),
-        ringBias: 0.35,
-      });
-
-      return;
-    }
-
     const last = lastHoverCellRef.current;
     if (last && last.x === cx && last.y === cy) return;
     lastHoverCellRef.current = { x: cx, y: cy };
 
-    stampSparseDisc({
+    const { rebirths } = stampSparseDisc({
       board,
       cols,
       rows,
@@ -188,9 +164,10 @@ export function GameOfLifeCanvas() {
       seed: (cx * 83492791) ^ (cy * 297657976),
       ringBias: 0.25,
     });
+
+    if (rebirths) updateLocalRebirths(rebirths);
   };
 
-  // Tailwind probe classes (so "classic" respects your Tailwind theme)
   const probeClasses = useMemo(
     () => ({
       dead: "bg-black",
@@ -327,9 +304,10 @@ export function GameOfLifeCanvas() {
 
     const loop = (t: number) => {
       if (!lastTRef.current) lastTRef.current = t;
-      const dt = t - lastTRef.current;
+      
+      const dtRaw = t - lastTRef.current;
+      const dt = Math.min(dtRaw, 50);
 
-      // advance click effects
       if (effectsRef.current.length) {
         for (const fx of effectsRef.current) fx.t += dt;
         effectsRef.current = effectsRef.current.filter((fx) => fx.t < 450);
@@ -398,8 +376,6 @@ export function GameOfLifeCanvas() {
     const onMove = (e: PointerEvent) => {
       const { x, y, rect } = toCanvasXY(e.clientX, e.clientY);
       if (!isInside(x, y, rect)) return;
-      // call your existing logic
-      // you can refactor handlePointerMove to accept (x,y) instead of React event
       handlePointerMoveXY(x, y);
     };
 

@@ -1,3 +1,4 @@
+import { GameOfLifeGrid } from "@/components/background/game-of-life/game-of-life-grid"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
@@ -8,35 +9,37 @@ export function AboutMe() {
   const highlights = [
     {
       icon: Zap,
-      title: "Speed + polish",
-      desc: "Fast iterations with a high bar for detail, performance, and accessibility.",
-    },
-    {
-      icon: Sparkles,
-      title: "Neon-friendly UI",
-      desc: "Glow, contrast, and depth—without sacrificing readability.",
+      title: "Delivery + quality",
+      desc: "Fast iterations with a high bar for maintainability, performance, and accessibility.",
     },
     {
       icon: Code2,
-      title: "Systems mindset",
-      desc: "Reusable components, consistent tokens, and clean patterns that scale.",
+      title: "Architecture-minded",
+      desc: "KPI-driven decisions, clean patterns, and system design that scales across teams.",
+    },
+    {
+      icon: Sparkles,
+      title: "Frontend depth",
+      desc: "Years of UI experience—strong typography, component systems, and polished interaction details.",
     },
   ]
 
-  const stack = ["React", "Next.js", "TypeScript", "Tailwind", "shadcn/ui"]
+  const stack = [
+    "Java",
+    "Spring Boot",
+    "Architecture & KPIs",
+    "React",
+    "Next.js",
+    "TypeScript",
+    "Tailwind",
+    "shadcn/ui",
+  ]
 
   return (
     <section id="about" className="relative overflow-hidden text-zinc-100">
       {/* Grid overlay */}
       <div className="pointer-events-none absolute inset-0 opacity-25">
-        <div
-          className="absolute inset-0"
-          style={{
-            backgroundImage:
-              "linear-gradient(rgba(250,204,21,0.16) 1px, transparent 1px), linear-gradient(90deg, rgba(250,204,21,0.10) 1px, transparent 1px)",
-            backgroundSize: "72px 72px",
-          }}
-        />
+        <GameOfLifeGrid />
       </div>
 
       <div className="relative mx-auto max-w-6xl px-6 py-16 sm:py-24">
@@ -53,7 +56,7 @@ export function AboutMe() {
                 variant="secondary"
                 className="bg-zinc-900/70 text-zinc-200 ring-1 ring-yellow-400/15"
               >
-                Neon • Shadow • Yellow
+                Backend • Frontend • Architecture
               </Badge>
             </div>
 
@@ -61,9 +64,11 @@ export function AboutMe() {
               A little about me
             </h2>
             <p className="mt-2 max-w-2xl text-zinc-300">
-              I’m a frontend-focused builder who likes clean systems, strong typography,
-              and luminous UI details. I care about speed, clarity, and making products
-              feel great to use.
+              I’m a consultant at Netcompany, working mainly with{" "}
+              <span className="text-yellow-200">Java Spring Boot</span> and{" "}
+              <span className="text-yellow-200">KPI/architectural design</span>. I also
+              have an extensive frontend background—so I’m comfortable owning work end-to-end,
+              from system decisions to the UI polish that users actually feel.
             </p>
           </div>
 
@@ -85,23 +90,28 @@ export function AboutMe() {
               </CardHeader>
               <CardContent className="space-y-4 text-zinc-300">
                 <p className="leading-relaxed">
-                  I design and build interfaces that balance{" "}
-                  <span className="text-yellow-200">bold visual energy</span> with{" "}
-                  <span className="text-yellow-200">practical usability</span>. My
-                  focus is shipping real features quickly—then refining the interaction
-                  details until everything feels effortless.
+                  Today I build backend services and platform features in{" "}
+                  <span className="text-yellow-200">Java/Spring Boot</span>, with a focus on{" "}
+                  <span className="text-yellow-200">architecture</span> and{" "}
+                  <span className="text-yellow-200">measurable outcomes</span> (KPIs, performance,
+                  reliability). I like making tradeoffs explicit and keeping solutions pragmatic.
                 </p>
 
                 <p className="leading-relaxed">
-                  I enjoy collaborating with product and design teams, translating ideas
-                  into scalable component systems, and keeping codebases tidy and
-                  predictable.
+                  Alongside that, I bring strong frontend experience—designing and implementing
+                  component systems, building clean interfaces, and refining the interaction details
+                  that make products feel fast and intentional.
+                </p>
+
+                <p className="leading-relaxed">
+                  I enjoy collaborating across product, design, and engineering, translating goals
+                  into a scalable system and a UI that’s easy to use and easy to maintain.
                 </p>
 
                 <Separator className="bg-yellow-400/15" />
 
                 <div>
-                  <p className="text-sm font-medium text-zinc-200">Current stack</p>
+                  <p className="text-sm font-medium text-zinc-200">Current focus & stack</p>
                   <div className="mt-3 flex flex-wrap gap-2">
                     {stack.map((t) => (
                       <Badge
@@ -118,8 +128,9 @@ export function AboutMe() {
                 <div className="rounded-xl border border-yellow-400/15 bg-black/30 p-4 shadow-[inset_0_0_18px_rgba(250,204,21,0.08)]">
                   <p className="text-sm font-medium text-zinc-200">What I’m looking for</p>
                   <p className="mt-1 text-sm text-zinc-300">
-                    Roles/projects where I can own UI quality, collaborate closely, and
-                    ship meaningful product improvements.
+                    Projects where I can shape architecture, ship real features, and leverage my
+                    frontend background to deliver a polished user experience—without sacrificing
+                    code quality and long-term maintainability.
                   </p>
                 </div>
               </CardContent>
@@ -146,12 +157,8 @@ export function AboutMe() {
                           <Icon className="h-5 w-5 text-yellow-200" />
                         </div>
                         <div>
-                          <p className="text-base font-semibold text-zinc-100">
-                            {h.title}
-                          </p>
-                          <p className="mt-1 text-sm leading-relaxed text-zinc-300">
-                            {h.desc}
-                          </p>
+                          <p className="text-base font-semibold text-zinc-100">{h.title}</p>
+                          <p className="mt-1 text-sm leading-relaxed text-zinc-300">{h.desc}</p>
                         </div>
                       </div>
                     </CardContent>

@@ -16,8 +16,6 @@ export async function GET() {
 export async function PUT(request: NextRequest) {
   const body = await request.json();
 
-  console.log('body', body);
-
   const deaths: number = body.deaths;
   const rebirths: number = body.rebirths;
 

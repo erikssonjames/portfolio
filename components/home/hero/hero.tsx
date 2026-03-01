@@ -5,6 +5,7 @@ import { Separator } from "@/components/ui/separator"
 import { ArrowUpRight, Github, Linkedin, Mail } from "lucide-react"
 import { getPublicEnv } from "@/config/env"
 import Link from "next/link"
+import { GameOfLifeGrid } from "@/components/background/game-of-life/game-of-life-grid"
 
 export function Hero() {
   const { GITHUB_LINK, LINKED_IN_LINK } = getPublicEnv()
@@ -13,14 +14,7 @@ export function Hero() {
     <section className="relative min-h-screen overflow-hidden text-zinc-100">
       {/* Grid + scanlines */}
       <div className="pointer-events-none absolute inset-0 opacity-30">
-        <div
-          className="absolute inset-0"
-          style={{
-            backgroundImage:
-              "linear-gradient(rgba(250,204,21,0.18) 1px, transparent 1px), linear-gradient(90deg, rgba(250,204,21,0.10) 1px, transparent 1px)",
-            backgroundSize: "64px 64px",
-          }}
-        />
+        <GameOfLifeGrid />
       </div>
 
       <div className="relative mx-auto flex min-h-screen max-w-6xl items-center px-6 py-16">

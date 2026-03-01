@@ -68,9 +68,11 @@ export function stampSparseDisc(opts: {
   density: number;
   seed: number;
   ringBias?: number;
-}) {
+}): { rebirths: number } {
   const { board, cols, rows, cx, cy, radius, density, seed, ringBias = 0.35 } = opts;
   const r2 = radius * radius;
+
+  let rebirths = 0;
 
   for (let dy = -radius; dy <= radius; dy++) {
     const ny = cy + dy;
@@ -94,11 +96,18 @@ export function stampSparseDisc(opts: {
       const h = hash2(nx, ny, seed);
       const r = rand01FromHash(h);
 
-      if (r < p) board[ny * cols + nx] = 1;
+      if (r < p) {
+        const idx = ny * cols + nx;
+        if (board[idx] === 0) {
+          board[idx] = 1;
+          rebirths++;
+        }
+      }
     }
   }
-}
 
+  return { rebirths };
+}
 export function stampExplosion(opts: {
   board: Uint8Array;
   cols: number;

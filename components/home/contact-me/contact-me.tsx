@@ -7,6 +7,7 @@ import { CopyEmailButton } from "./copy-email-button"
 import { getPublicEnv } from "@/config/env"
 import Link from "next/link"
 import { ContactMeForm } from "./contact-me-form"
+import { GameOfLifeGrid } from "@/components/background/game-of-life/game-of-life-grid"
 
 export function ContactMe() {
   const { EMAIL, GITHUB_LINK, LINKED_IN_LINK } = getPublicEnv()
@@ -15,14 +16,7 @@ export function ContactMe() {
     <section id="contact" className="relative overflow-hidden text-zinc-100">
       {/* Grid overlay */}
       <div className="pointer-events-none absolute inset-0 opacity-25">
-        <div
-          className="absolute inset-0"
-          style={{
-            backgroundImage:
-              "linear-gradient(rgba(250,204,21,0.16) 1px, transparent 1px), linear-gradient(90deg, rgba(250,204,21,0.10) 1px, transparent 1px)",
-            backgroundSize: "72px 72px",
-          }}
-        />
+        <GameOfLifeGrid />
       </div>
 
       <div className="relative mx-auto max-w-6xl px-6 py-16 sm:py-24">

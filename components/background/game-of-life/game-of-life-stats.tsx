@@ -11,8 +11,6 @@ import { Activity, Skull, Sparkles, ChevronDown, ChevronUp } from "lucide-react"
 import { useGameOfLifeStats } from "./use-game-of-life-stats"
 import { useGol } from "./gol-context"
 
-type Scope = "local" | "global"
-
 function StatRow({
   icon: Icon,
   label,
@@ -40,41 +38,28 @@ function StatRow({
 export function GameOfLifeStats({
   className,
   defaultExpanded = false,
-  defaultScope = "local",
 }: {
   className?: string
   defaultExpanded?: boolean
-  defaultScope?: Scope
 }) {
   const { localDeaths, localRebirths } = useGol()
   const { statistics } = useGameOfLifeStats()
+  const { deaths: globalDeaths, rebirths: globalRebirths } = statistics ?? { deaths: 0, rebirths: 0 }
   const [expanded, setExpanded] = React.useState(defaultExpanded)
-  const [scope, setScope] = React.useState<Scope>(defaultScope)
 
-  const active = scope === "local" 
-    ? { deaths: localDeaths, rebirths: localRebirths } 
-    : { deaths: statistics?.deaths, rebirths: statistics?.rebirths }
+  const totalLocalEvents = localDeaths + localRebirths
 
-  const deaths = active?.deaths ?? 0
-  const rebirths = active?.rebirths ?? 0
-  const total = deaths + rebirths
-  const rebirthRate = total > 0 ? Math.round((rebirths / total) * 100) : 0
-
-  const loading = !statistics || !active
+  const totalGlobalEvents = globalDeaths + globalRebirths
 
   const toggleExpanded = () => setExpanded((v) => !v)
-
-  const onScopeClick = (next: Scope) => (e: React.MouseEvent) => {
-    e.stopPropagation() // don't collapse/expand when switching scope
-    setScope(next)
-  }
 
   return (
     <Card
       className={cn(
         "relative overflow-hidden rounded-2xl border-white/10 bg-black/40 shadow-xl backdrop-blur py-0 gap-0",
         "shadow-[0_0_50px_rgba(250,204,21,0.10)]",
-        className
+        className,
+        expanded && "min-w-72"
       )}
     >
       {/* tiny neon glow */}
@@ -99,50 +84,13 @@ export function GameOfLifeStats({
           <div className="min-w-0 leading-tight">
             <div className="flex items-center gap-2">
               <span className="truncate text-xs font-medium text-zinc-100">Lifecycle</span>
-
-              {/* scope toggle (small, shadcn-y) */}
-              <span className="inline-flex items-center rounded-xl border border-yellow-400/15 bg-black/30 p-0.5">
-                <Button
-                  type="button"
-                  variant="ghost"
-                  size="sm"
-                  onClick={onScopeClick("local")}
-                  className={cn(
-                    "h-5 rounded-lg px-2 text-[11px] leading-none",
-                    scope === "local"
-                      ? "bg-yellow-400/15 text-yellow-200 hover:bg-yellow-400/20"
-                      : "text-zinc-300 hover:bg-yellow-400/10 hover:text-yellow-200"
-                  )}
-                  aria-pressed={scope === "local"}
-                >
-                  Local
-                </Button>
-                <Button
-                  type="button"
-                  variant="ghost"
-                  size="sm"
-                  onClick={onScopeClick("global")}
-                  className={cn(
-                    "h-5 rounded-lg px-2 text-[11px] leading-none",
-                    scope === "global"
-                      ? "bg-yellow-400/15 text-yellow-200 hover:bg-yellow-400/20"
-                      : "text-zinc-300 hover:bg-yellow-400/10 hover:text-yellow-200"
-                  )}
-                  aria-pressed={scope === "global"}
-                >
-                  Global
-                </Button>
-              </span>
             </div>
 
             {/* secondary line only when collapsed */}
-            {!expanded && !loading && (
-              <div className="mt-0.5 truncate text-[11px] text-zinc-400">
-                {deaths.toLocaleString()} deaths • {rebirths.toLocaleString()} rebirths
+            {!expanded && (
+              <div className="mt-0.5 truncate text-[11px] text-zinc-400 pe-2">
+                {localDeaths.toLocaleString()} deaths • {localRebirths.toLocaleString()} rebirths
               </div>
-            )}
-            {!expanded && loading && (
-              <div className="mt-0.5 truncate text-[11px] text-zinc-500">Loading stats…</div>
             )}
           </div>
         </div>
@@ -159,33 +107,19 @@ export function GameOfLifeStats({
           <Separator className="bg-yellow-400/10" />
 
           <div className="grid gap-2 p-2.5">
-            <StatRow icon={Skull} label="Deaths" value={deaths} />
-            <StatRow icon={Sparkles} label="Rebirths" value={rebirths} />
+            <p className="text-muted-foreground text-xs">Local stats</p>
 
-            <div className="rounded-xl border border-yellow-400/15 bg-black/30 px-3 py-2">
-              <div className="flex items-center justify-between">
-                <span className="text-xs text-zinc-300">Rebirth rate</span>
-                <Badge
-                  variant="outline"
-                  className="h-5 border-yellow-400/25 bg-yellow-400/10 px-2 text-[11px] text-yellow-200"
-                  title="Rebirths / (Deaths + Rebirths)"
-                >
-                  {rebirthRate}%
-                </Badge>
-              </div>
+            <StatRow icon={Skull} label="Deaths" value={localDeaths} />
+            <StatRow icon={Sparkles} label="Rebirths" value={localRebirths} />
+            <StatRow icon={Sparkles} label="Total" value={totalLocalEvents} />
 
-              <div className="mt-2 h-2 w-full overflow-hidden rounded-full bg-zinc-900/70">
-                <div
-                  className="h-full rounded-full bg-yellow-400/70 shadow-[0_0_18px_rgba(250,204,21,0.30)]"
-                  style={{ width: `${rebirthRate}%` }}
-                />
-              </div>
+            <Separator className="bg-yellow-400/10" />
 
-              <div className="mt-2 flex items-center justify-between text-[11px] text-zinc-500">
-                <span>Total events</span>
-                <span className="tabular-nums">{total.toLocaleString()}</span>
-              </div>
-            </div>
+            <p className="text-muted-foreground text-xs">Global stats</p>
+
+            <StatRow icon={Skull} label="Deaths" value={globalDeaths} />
+            <StatRow icon={Sparkles} label="Rebirths" value={globalRebirths} />
+            <StatRow icon={Sparkles} label="Total" value={totalGlobalEvents} />
           </div>
         </div>
       </div>

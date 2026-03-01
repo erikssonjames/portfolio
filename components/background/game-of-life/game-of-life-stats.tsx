@@ -9,6 +9,7 @@ import { Button } from "@/components/ui/button"
 import { cn } from "@/lib/utils"
 import { Activity, Skull, Sparkles, ChevronDown, ChevronUp } from "lucide-react"
 import { useGameOfLifeStats } from "./use-game-of-life-stats"
+import { useGol } from "./gol-context"
 
 type Scope = "local" | "global"
 
@@ -45,17 +46,14 @@ export function GameOfLifeStats({
   defaultExpanded?: boolean
   defaultScope?: Scope
 }) {
+  const { localDeaths, localRebirths } = useGol()
   const { statistics } = useGameOfLifeStats()
   const [expanded, setExpanded] = React.useState(defaultExpanded)
   const [scope, setScope] = React.useState<Scope>(defaultScope)
 
-  // Expect your hook to expose BOTH:
-  // statistics.local.{deaths, rebirths}
-  // statistics.global.{deaths, rebirths}
-  //
-  // If your current shape is different, adjust these selectors only.
-  // const active = scope === "local" ? local : global
-  const active = statistics
+  const active = scope === "local" 
+    ? { deaths: localDeaths, rebirths: localRebirths } 
+    : { deaths: statistics?.deaths, rebirths: statistics?.rebirths }
 
   const deaths = active?.deaths ?? 0
   const rebirths = active?.rebirths ?? 0
@@ -74,7 +72,7 @@ export function GameOfLifeStats({
   return (
     <Card
       className={cn(
-        "relative overflow-hidden rounded-2xl border-white/10 bg-black/40 shadow-xl backdrop-blur py-0 gap-0 px-4",
+        "relative overflow-hidden rounded-2xl border-white/10 bg-black/40 shadow-xl backdrop-blur py-0 gap-0",
         "shadow-[0_0_50px_rgba(250,204,21,0.10)]",
         className
       )}
@@ -187,21 +185,6 @@ export function GameOfLifeStats({
                 <span>Total events</span>
                 <span className="tabular-nums">{total.toLocaleString()}</span>
               </div>
-            </div>
-
-            <div className="flex items-center justify-end">
-              <Button
-                type="button"
-                variant="ghost"
-                size="sm"
-                className="h-7 px-2 text-[11px] text-zinc-300 hover:bg-yellow-400/10 hover:text-yellow-200"
-                onClick={(e) => {
-                  e.stopPropagation()
-                  setExpanded(false)
-                }}
-              >
-                Collapse
-              </Button>
             </div>
           </div>
         </div>

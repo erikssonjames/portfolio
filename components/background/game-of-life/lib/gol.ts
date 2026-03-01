@@ -2,7 +2,15 @@ export function randomize(buf: Uint8Array, p = 0.5) {
   for (let i = 0; i < buf.length; i++) buf[i] = Math.random() < p ? 1 : 0;
 }
 
-export function step(current: Uint8Array, next: Uint8Array, cols: number, rows: number) {
+export function step(
+  current: Uint8Array,
+  next: Uint8Array,
+  cols: number,
+  rows: number
+): { deaths: number; rebirths: number } {
+  let deaths = 0;
+  let rebirths = 0;
+
   for (let y = 0; y < rows; y++) {
     const yOff = y * cols;
     for (let x = 0; x < cols; x++) {
@@ -32,7 +40,18 @@ export function step(current: Uint8Array, next: Uint8Array, cols: number, rows: 
       }
 
       const alive = current[i] === 1;
-      next[i] = (alive ? n === 2 || n === 3 : n === 3) ? 1 : 0;
+      const out = (alive ? n === 2 || n === 3 : n === 3) ? 1 : 0;
+
+      next[i] = out;
+
+      // Count transitions
+      if (alive) {
+        if (out === 0) deaths++;
+      } else {
+        if (out === 1) rebirths++;
+      }
     }
   }
+
+  return { deaths, rebirths };
 }

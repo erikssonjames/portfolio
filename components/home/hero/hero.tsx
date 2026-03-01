@@ -3,9 +3,12 @@ import { Badge } from "@/components/ui/badge"
 import { Card, CardContent } from "@/components/ui/card"
 import { Separator } from "@/components/ui/separator"
 import { ArrowUpRight, Github, Linkedin, Mail } from "lucide-react"
-import { scrollToElement } from "@/lib/scroll"
+import { getPublicEnv } from "@/config/env"
+import Link from "next/link"
 
 export function Hero() {
+  const { GITHUB_LINK, LINKED_IN_LINK } = getPublicEnv()
+
   return (
     <section className="relative min-h-screen overflow-hidden text-zinc-100">
       {/* Grid + scanlines */}
@@ -83,22 +86,32 @@ export function Hero() {
                     </Button>
 
                     <div className="flex items-center gap-2 sm:ml-2">
-                        <Button
-                          variant="ghost"
-                          size="icon"
-                          className="text-zinc-300 hover:bg-yellow-400/10 hover:text-yellow-200"
-                          aria-label="GitHub"
+                        <Link
+                          href={GITHUB_LINK}
+                          target="_blank"
                         >
-                          <Github className="h-5 w-5" />
-                        </Button>
-                        <Button
-                          variant="ghost"
-                          size="icon"
-                          className="text-zinc-300 hover:bg-yellow-400/10 hover:text-yellow-200"
-                          aria-label="LinkedIn"
+                          <Button
+                            variant="ghost"
+                            size="icon"
+                            className="text-zinc-300 hover:bg-yellow-400/10 hover:text-yellow-200"
+                            aria-label="GitHub"
+                          >
+                            <Github className="h-5 w-5" />
+                          </Button>
+                        </Link>
+                        <Link
+                          href={LINKED_IN_LINK}
+                          target="_blank"
                         >
-                          <Linkedin className="h-5 w-5" />
-                        </Button>
+                          <Button
+                            variant="ghost"
+                            size="icon"
+                            className="text-zinc-300 hover:bg-yellow-400/10 hover:text-yellow-200"
+                            aria-label="LinkedIn"
+                          >
+                            <Linkedin className="h-5 w-5" />
+                          </Button>
+                        </Link>
                     </div>
                     </div>
 

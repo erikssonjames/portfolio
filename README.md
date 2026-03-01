@@ -74,7 +74,7 @@ DATABASE_URL="postgresql://portfolio:portfolio@localhost:5432/portfolio?schema=p
 
 ```bash
 npx prisma migrate dev
-npn run db:seed
+npm run db:seed
 ```
 
 ### 5 Run the app

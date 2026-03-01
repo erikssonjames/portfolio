@@ -19,7 +19,7 @@ type PaintState = {
 };
 
 export function GameOfLifeCanvas() {
-  const { isPlaying, restartToken, randomizeToken, settings } = useGol();
+  const { isPlaying, restartToken, randomizeToken, settings, updateLocalDeaths, updateLocalRebirths } = useGol();
 
   // latest settings in RAF loop
   const settingsRef = useRef(settings);
@@ -349,7 +349,11 @@ export function GameOfLifeCanvas() {
         let steps = 0;
         const maxSteps = 3;
         while (accRef.current >= s.tickMs && steps < maxSteps && shouldAdvance) {
-          step(current, next, cols, rows);
+          const { deaths, rebirths } = step(current, next, cols, rows);
+          
+          if (deaths) updateLocalDeaths(deaths);
+          if (rebirths) updateLocalRebirths(rebirths);
+
           currentRef.current = next;
           nextRef.current = current;
           accRef.current -= s.tickMs;

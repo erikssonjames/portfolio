@@ -31,25 +31,6 @@ npm install
 
 This project uses a local Postgres database via Docker.
 
-Create `docker-compose.yml` in the project root:
-
-```yaml
-services:
-  db:
-    image: postgres:16
-    environment:
-      POSTGRES_USER: portfolio
-      POSTGRES_PASSWORD: portfolio
-      POSTGRES_DB: portfolio
-    ports:
-      - "5432:5432"
-    volumes:
-      - pgdata:/var/lib/postgresql/data
-
-volumes:
-  pgdata:
-```
-
 Start it:
 
 ```bash

@@ -2,7 +2,7 @@
 
 import { useCallback, useEffect, useMemo, useRef } from "react";
 import { randomize, step } from "./lib/gol";
-import { drawRoundedRect, drawVignette, mix, parseRgb, rgbToStr, stampSparseDisc } from "./lib/canvas";
+import { drawRoundedRect, drawVignette, parseRgb, rgbToStr, stampSparseDisc } from "./lib/canvas";
 import { useGol } from "./gol-context";
 
 const GAP = 1;
@@ -55,9 +55,9 @@ export function GameOfLifeCanvas() {
   });
 
   // Theme mapping:
-  // - classic uses your Tailwind-probed alive/dead
-  // - mono is grayscale (alive becomes bright gray)
-  // - neon shifts alive toward cyan/pink and darkens dead slightly
+  // - classic uses the probed Tailwind colors
+  // - mono uses a high-contrast silver-on-charcoal palette
+  // - neon uses an explicit electric cyan palette instead of mixing with the base yellow
   const computeThemeColors = useCallback(() => {
     const s = settingsRef.current;
     const baseAlive = parseRgb(baseColorsRef.current.aliveCss) ?? { r: 253, g: 224, b: 71 };
@@ -68,29 +68,15 @@ export function GameOfLifeCanvas() {
     }
 
     if (s.theme === "mono") {
-      // luminance -> grayscale
-      // const lumAlive = Math.round(0.2126 * baseAlive.r + 0.7152 * baseAlive.g + 0.0722 * baseAlive.b);
-      const lumDead = Math.round(0.2126 * baseDead.r + 0.7152 * baseDead.g + 0.0722 * baseDead.b);
-
-      // const alive = { r: lumAlive, g: lumAlive, b: lumAlive };
-      const dead = { r: lumDead, g: lumDead, b: lumDead };
-
-      // push alive brighter so it pops
-      const aliveBoost = mix(dead, { r: 245, g: 245, b: 245 }, 0.9);
-      return { alive: rgbToStr(aliveBoost), dead: rgbToStr(dead) };
+      const alive = { r: 232, g: 234, b: 237 };
+      const dead = { r: 12, g: 12, b: 16 };
+      return { alive: rgbToStr(alive), dead: rgbToStr(dead) };
     }
 
-    // neon
-    const neonA = { r: 34, g: 211, b: 238 }; // cyan-400-ish
-    const neonB = { r: 244, g: 114, b: 182 }; // pink-400-ish
-    const neonMix = mix(neonA, neonB, 0.45);
+    const alive = { r: 56, g: 244, b: 214 };
+    const dead = { r: 4, g: 10, b: 20 };
 
-    const alive = mix(baseAlive, neonMix, 0.75);
-
-    // dead: slightly lifted from pure black so neon glow shows nicer
-    const deadLift = mix(baseDead, { r: 8, g: 8, b: 12 }, 0.6);
-
-    return { alive: rgbToStr(alive), dead: rgbToStr(deadLift) };
+    return { alive: rgbToStr(alive), dead: rgbToStr(dead) };
   }, []);
 
   const rebuild = useCallback(() => {

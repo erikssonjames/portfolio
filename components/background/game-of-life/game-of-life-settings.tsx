@@ -1,65 +1,124 @@
-"use client";
+"use client"
 
-import * as React from "react";
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
-import { Slider } from "@/components/ui/slider";
-import { Switch } from "@/components/ui/switch";
-import { Label } from "@/components/ui/label";
-import { Button } from "@/components/ui/button";
-import { Separator } from "@/components/ui/separator";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import * as React from "react"
+import {
+  Brush,
+  Gauge,
+  Grid3X3,
+  Palette,
+  Play,
+  RefreshCw,
+  Sparkles,
+  SunMedium,
+  Wand2,
+} from "lucide-react"
+import { Button } from "@/components/ui/button"
+import { ButtonGroup } from "@/components/ui/button-group"
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import { Label } from "@/components/ui/label"
+import { Separator } from "@/components/ui/separator"
+import { Slider } from "@/components/ui/slider"
+import { Switch } from "@/components/ui/switch"
 
 export type GolSettings = {
-  backgroundOpacity: number;
-
-  cellSize: number; // px
-  tickMs: number; // ms per step
-  randomFill: number; // 0..1 used on restart/randomize
-
-  // Interaction / visuals (optional but useful)
-  pauseWhilePainting: boolean;
-  brushMaxRadius: number; // in cells
-  brushGrowthMs: number; // ms per +1 radius while holding
-  brushDensity: number; // 0..1 (base density for painting)
-
-  showVignette: boolean;
-  glowStrength: number; // 0..30-ish
-  theme: "classic" | "neon" | "mono";
-
-  disableBrush: boolean;
-};
+  backgroundOpacity: number
+  cellSize: number
+  tickMs: number
+  randomFill: number
+  pauseWhilePainting: boolean
+  brushMaxRadius: number
+  brushGrowthMs: number
+  brushDensity: number
+  showVignette: boolean
+  glowStrength: number
+  theme: "classic" | "neon" | "mono"
+  disableBrush: boolean
+}
 
 export const DEFAULT_GOL_SETTINGS: GolSettings = {
   backgroundOpacity: 25,
-
   cellSize: 30,
   tickMs: 300,
   randomFill: 0.5,
-
   pauseWhilePainting: false,
   brushMaxRadius: 10,
   brushGrowthMs: 250,
   brushDensity: 0.55,
-
   showVignette: true,
   glowStrength: 10,
   theme: "classic",
-
-  disableBrush: false
-};
-
-function clamp(n: number, min: number, max: number) {
-  return Math.max(min, Math.min(max, n));
+  disableBrush: false,
 }
 
 type GameOfLifeSettingsPanelProps = {
-  value: GolSettings;
-  onChange: (next: GolSettings) => void;
+  value: GolSettings
+  onChange: (next: GolSettings) => void
+  onRestart?: () => void
+  onRandomize?: () => void
+}
 
-  // Optional convenience callbacks (hook these into your parent)
-  onRestart?: () => void;
-  onRandomize?: () => void;
-};
+type PresetButtonGroupProps<T extends string | number> = {
+  icon: React.ComponentType<{ className?: string }>
+  label: string
+  value: T
+  options: Array<{ label: string; value: T }>
+  onChange: (next: T) => void
+}
+
+type SectionHeaderProps = {
+  icon: React.ComponentType<{ className?: string }>
+  title: string
+}
+
+function SectionHeader({ icon: Icon, title }: SectionHeaderProps) {
+  return (
+    <div className="flex items-center gap-2 text-sm font-medium text-zinc-100">
+      <div className="rounded-xl border border-white/10 bg-white/5 p-2">
+        <Icon className="h-4 w-4 text-yellow-200" />
+      </div>
+      <span>{title}</span>
+    </div>
+  )
+}
+
+function PresetButtonGroup<T extends string | number>({
+  icon: Icon,
+  label,
+  value,
+  options,
+  onChange,
+}: PresetButtonGroupProps<T>) {
+  return (
+    <div className="grid gap-2">
+      <div className="flex items-center gap-2 text-xs font-medium uppercase tracking-[0.18em] text-zinc-400">
+        <Icon className="h-3.5 w-3.5 text-zinc-500" />
+        <span>{label}</span>
+      </div>
+
+      <ButtonGroup className="flex-wrap">
+        {options.map((option) => {
+          const active = option.value === value
+
+          return (
+            <Button
+              key={String(option.value)}
+              size="sm"
+              variant={active ? "secondary" : "outline"}
+              className={
+                active
+                  ? "bg-white text-black hover:bg-white/90"
+                  : "border-white/10 bg-white/5 text-white hover:bg-white/10"
+              }
+              onClick={() => onChange(option.value)}
+            >
+              {option.label}
+            </Button>
+          )
+        })}
+      </ButtonGroup>
+    </div>
+  )
+}
 
 export function GameOfLifeSettingsPanel({
   value,
@@ -70,91 +129,77 @@ export function GameOfLifeSettingsPanel({
   const set = React.useCallback(
     (patch: Partial<GolSettings>) => onChange({ ...value, ...patch }),
     [onChange, value]
-  );
-
-  // Slider returns number[]
-  const setSlider =
-    (key: keyof GolSettings, { min, max, step }: { min: number; max: number; step?: number }) =>
-    (arr: number[]) => {
-      const v = arr?.[0] ?? min;
-      const next = clamp(step ? Math.round(v / step) * step : v, min, max);
-      set({ [key]: next } as Partial<GolSettings>);
-    };
+  )
 
   return (
-    <Card className="w-90 max-w-[92vw] border-white/10 bg-black/80 text-white backdrop-blur shadow-xl">
+    <Card className="w-[26rem] max-w-[92vw] border-white/10 bg-black/85 text-white shadow-xl backdrop-blur">
       <CardHeader className="pb-3">
-        <CardTitle className="text-base">Game of Life Settings</CardTitle>
-        <CardDescription className="text-white/70">
-          Tweak simulation + interaction. Changes apply immediately.
-        </CardDescription>
+        <CardTitle className="flex items-center gap-2 text-base">
+          <Sparkles className="h-4 w-4 text-yellow-200" />
+          <span>Life Controls</span>
+        </CardTitle>
       </CardHeader>
 
-      <CardContent className="space-y-5">
-        {/* Core simulation */}
-        <div className="space-y-4">
-          <div className="flex items-center justify-between gap-3">
-            <div className="space-y-1">
-              <Label className="text-white">Cell size</Label>
-              <div className="text-xs text-white/60">{value.cellSize}px</div>
-            </div>
-            <div className="w-48">
-              <Slider
-                value={[value.cellSize]}
-                onValueChange={setSlider("cellSize", { min: 8, max: 60, step: 1 })}
-                min={8}
-                max={60}
-                step={1}
-              />
-            </div>
-          </div>
+      <CardContent className="space-y-4">
+        <div className="space-y-3 rounded-2xl border border-white/8 bg-white/3 p-4">
+          <SectionHeader icon={Play} title="Simulation" />
 
-          <div className="flex items-center justify-between gap-3">
-            <div className="space-y-1">
-              <Label className="text-white">Speed</Label>
-              <div className="text-xs text-white/60">
-                {value.tickMs}ms / tick{" "}
-                <span className="text-white/40">
-                  (≈ {Math.round((1000 / value.tickMs) * 10) / 10} tps)
-                </span>
-              </div>
-            </div>
-            <div className="w-48">
-              <Slider
-                value={[value.tickMs]}
-                onValueChange={setSlider("tickMs", { min: 30, max: 600, step: 10 })}
-                min={30}
-                max={600}
-                step={10}
-              />
-            </div>
-          </div>
+          <PresetButtonGroup
+            icon={Palette}
+            label="Theme"
+            value={value.theme}
+            onChange={(theme) => set({ theme })}
+            options={[
+              { label: "Classic", value: "classic" },
+              { label: "Neon", value: "neon" },
+              { label: "Mono", value: "mono" },
+            ]}
+          />
 
-          <div className="flex items-center justify-between gap-3">
-            <div className="space-y-1">
-              <Label className="text-white">Random fill</Label>
-              <div className="text-xs text-white/60">{Math.round(value.randomFill * 100)}%</div>
-            </div>
-            <div className="w-48">
-              <Slider
-                value={[Math.round(value.randomFill * 100)]}
-                onValueChange={(arr) => set({ randomFill: clamp((arr?.[0] ?? 50) / 100, 0.05, 0.95) })}
-                min={5}
-                max={95}
-                step={1}
-              />
-            </div>
-          </div>
+          <PresetButtonGroup
+            icon={Grid3X3}
+            label="Grid"
+            value={value.cellSize}
+            onChange={(cellSize) => set({ cellSize })}
+            options={[
+              { label: "Tight", value: 18 },
+              { label: "Balanced", value: 30 },
+              { label: "Chunky", value: 42 },
+            ]}
+          />
+
+          <PresetButtonGroup
+            icon={Gauge}
+            label="Speed"
+            value={value.tickMs}
+            onChange={(tickMs) => set({ tickMs })}
+            options={[
+              { label: "Slow", value: 420 },
+              { label: "Medium", value: 300 },
+              { label: "Fast", value: 180 },
+            ]}
+          />
+
+          <PresetButtonGroup
+            icon={Wand2}
+            label="Fill"
+            value={value.randomFill}
+            onChange={(randomFill) => set({ randomFill })}
+            options={[
+              { label: "Sparse", value: 0.32 },
+              { label: "Balanced", value: 0.5 },
+              { label: "Dense", value: 0.68 },
+            ]}
+          />
         </div>
 
-        <Separator className="bg-white/10" />
+        <div className="space-y-3 rounded-2xl border border-white/8 bg-white/3 p-4">
+          <SectionHeader icon={Brush} title="Brush" />
 
-        {/* Interaction */}
-        <div className="space-y-4">
-          <div className="flex items-center justify-between gap-3">
-            <div className="space-y-1">
-              <Label className="text-white">Pause while painting</Label>
-              <div className="text-xs text-white/60">Stops simulation when pointer is held down.</div>
+          <div className="flex items-center justify-between rounded-2xl border border-white/8 bg-black/20 px-3 py-2.5">
+            <div className="flex items-center gap-2 text-sm text-zinc-200">
+              <PauseWhilePaintIcon />
+              <span>Pause while painting</span>
             </div>
             <Switch
               checked={value.pauseWhilePainting}
@@ -162,146 +207,120 @@ export function GameOfLifeSettingsPanel({
             />
           </div>
 
-          <div className="flex items-center justify-between gap-3">
-            <div className="space-y-1">
-              <Label className="text-white">Brush max radius</Label>
-              <div className="text-xs text-white/60">{value.brushMaxRadius} cells</div>
-            </div>
-            <div className="w-48">
-              <Slider
-                value={[value.brushMaxRadius]}
-                onValueChange={setSlider("brushMaxRadius", { min: 2, max: 24, step: 1 })}
-                min={2}
-                max={24}
-                step={1}
-              />
-            </div>
-          </div>
+          <PresetButtonGroup
+            icon={Brush}
+            label="Size"
+            value={value.brushMaxRadius}
+            onChange={(brushMaxRadius) => set({ brushMaxRadius })}
+            options={[
+              { label: "Small", value: 6 },
+              { label: "Medium", value: 10 },
+              { label: "Large", value: 16 },
+            ]}
+          />
 
-          <div className="flex items-center justify-between gap-3">
-            <div className="space-y-1">
-              <Label className="text-white">Brush growth</Label>
-              <div className="text-xs text-white/60">{value.brushGrowthMs}ms per +1 radius</div>
-            </div>
-            <div className="w-48">
-              <Slider
-                value={[value.brushGrowthMs]}
-                onValueChange={setSlider("brushGrowthMs", { min: 80, max: 600, step: 10 })}
-                min={80}
-                max={600}
-                step={10}
-              />
-            </div>
-          </div>
+          <PresetButtonGroup
+            icon={Gauge}
+            label="Growth"
+            value={value.brushGrowthMs}
+            onChange={(brushGrowthMs) => set({ brushGrowthMs })}
+            options={[
+              { label: "Quick", value: 140 },
+              { label: "Balanced", value: 250 },
+              { label: "Slow", value: 420 },
+            ]}
+          />
 
-          <div className="flex items-center justify-between gap-3">
-            <div className="space-y-1">
-              <Label className="text-white">Brush density</Label>
-              <div className="text-xs text-white/60">{Math.round(value.brushDensity * 100)}%</div>
-            </div>
-            <div className="w-48">
-              <Slider
-                value={[Math.round(value.brushDensity * 100)]}
-                onValueChange={(arr) =>
-                  set({ brushDensity: clamp((arr?.[0] ?? 55) / 100, 0.1, 0.95) })
-                }
-                min={10}
-                max={95}
-                step={1}
-              />
-            </div>
-          </div>
+          <PresetButtonGroup
+            icon={Wand2}
+            label="Density"
+            value={value.brushDensity}
+            onChange={(brushDensity) => set({ brushDensity })}
+            options={[
+              { label: "Light", value: 0.32 },
+              { label: "Balanced", value: 0.55 },
+              { label: "Heavy", value: 0.8 },
+            ]}
+          />
         </div>
 
-        <Separator className="bg-white/10" />
+        <div className="space-y-3 rounded-2xl border border-white/8 bg-white/3 p-4">
+          <SectionHeader icon={SunMedium} title="Visuals" />
 
-        {/* Visuals */}
-        <div className="space-y-4">
-          <div className="flex items-center justify-between gap-3">
-            <div className="space-y-1">
-              <Label className="text-white">Theme</Label>
-              <div className="text-xs text-white/60">Affects colors (if you wire it up).</div>
-            </div>
-            <Select value={value.theme} onValueChange={(v) => set({ theme: v as GolSettings["theme"] })}>
-              <SelectTrigger className="w-40 bg-white/5 border-white/10 text-white">
-                <SelectValue placeholder="Select theme" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="classic">Classic</SelectItem>
-                <SelectItem value="neon">Neon</SelectItem>
-                <SelectItem value="mono">Mono</SelectItem>
-              </SelectContent>
-            </Select>
-          </div>
-
-          <div className="flex items-center justify-between gap-3">
-            <div className="space-y-1">
-              <Label className="text-white">Background Opacity</Label>
-              <div className="text-xs text-white/60">{value.backgroundOpacity}% opacity</div>
-            </div>
-            <div className="w-48">
+          <div className="grid gap-3">
+            <div className="grid gap-2">
+              <div className="flex items-center justify-between text-sm text-zinc-200">
+                <div className="flex items-center gap-2">
+                  <SunMedium className="h-4 w-4 text-zinc-500" />
+                  <Label className="text-white">Background</Label>
+                </div>
+                <span className="text-xs text-zinc-400">{value.backgroundOpacity}%</span>
+              </div>
               <Slider
                 value={[value.backgroundOpacity]}
-                onValueChange={setSlider("backgroundOpacity", { min: 0, max: 100, step: 5 })}
+                onValueChange={(arr) => set({ backgroundOpacity: arr?.[0] ?? value.backgroundOpacity })}
                 min={0}
                 max={100}
                 step={5}
               />
             </div>
-          </div>
 
-          <div className="flex items-center justify-between gap-3">
-            <div className="space-y-1">
-              <Label className="text-white">Glow strength</Label>
-              <div className="text-xs text-white/60">{value.glowStrength}px shadowBlur</div>
-            </div>
-            <div className="w-48">
+            <div className="grid gap-2">
+              <div className="flex items-center justify-between text-sm text-zinc-200">
+                <div className="flex items-center gap-2">
+                  <Sparkles className="h-4 w-4 text-zinc-500" />
+                  <Label className="text-white">Glow</Label>
+                </div>
+                <span className="text-xs text-zinc-400">{value.glowStrength}px</span>
+              </div>
               <Slider
                 value={[value.glowStrength]}
-                onValueChange={setSlider("glowStrength", { min: 0, max: 30, step: 1 })}
+                onValueChange={(arr) => set({ glowStrength: arr?.[0] ?? value.glowStrength })}
                 min={0}
                 max={30}
                 step={1}
               />
             </div>
-          </div>
 
-          <div className="flex items-center justify-between gap-3">
-            <div className="space-y-1">
-              <Label className="text-white">Vignette</Label>
-              <div className="text-xs text-white/60">Darkens edges for depth.</div>
+            <div className="flex items-center justify-between rounded-2xl border border-white/8 bg-black/20 px-3 py-2.5">
+              <div className="flex items-center gap-2 text-sm text-zinc-200">
+                <Palette className="h-4 w-4 text-zinc-500" />
+                <span>Vignette</span>
+              </div>
+              <Switch checked={value.showVignette} onCheckedChange={(checked) => set({ showVignette: checked })} />
             </div>
-            <Switch checked={value.showVignette} onCheckedChange={(c) => set({ showVignette: c })} />
           </div>
         </div>
 
         <Separator className="bg-white/10" />
 
-        {/* Actions */}
         <div className="flex gap-2">
           <Button
             variant="secondary"
-            className="flex-1 bg-white/10 text-white hover:bg-white/15 border border-white/10"
+            className="flex-1 border border-white/10 bg-white/10 text-white hover:bg-white/15"
             onClick={() => onRandomize?.()}
           >
+            <Wand2 className="mr-2 h-4 w-4" />
             Randomize
           </Button>
-          <Button
-            className="flex-1 bg-white text-black hover:bg-white/90"
-            onClick={() => onRestart?.()}
-          >
+          <Button className="flex-1 bg-white text-black hover:bg-white/90" onClick={() => onRestart?.()}>
+            <RefreshCw className="mr-2 h-4 w-4" />
             Restart
           </Button>
         </div>
 
         <Button
           variant="ghost"
-          className="w-full text-white/80 hover:text-white hover:bg-white/10"
+          className="w-full text-white/80 hover:bg-white/10 hover:text-white"
           onClick={() => onChange(DEFAULT_GOL_SETTINGS)}
         >
-          Reset to defaults
+          Reset
         </Button>
       </CardContent>
     </Card>
-  );
+  )
+}
+
+function PauseWhilePaintIcon() {
+  return <div className="h-4 w-4 rounded-sm border border-zinc-600/70 bg-zinc-800/80" aria-hidden="true" />
 }

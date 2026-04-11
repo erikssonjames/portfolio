@@ -1,26 +1,14 @@
 "use client"
 
 import * as React from "react"
+import Link from "next/link"
+import { ArrowUpRight, Github } from "lucide-react"
+import { cn } from "@/lib/utils"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
-import { ArrowUpRight, Github } from "lucide-react"
-import Link from "next/link"
-import { cn } from "@/lib/utils"
-
-export type ProjectType = {
-  title: string
-  description: string
-  metric: {
-    label: string
-    value: string
-  }
-  tags: string[]
-  healthCheckUrl?: string
-  repoUrl: string
-  liveUrl?: string
-  status: "DONE" | "IN_PRODUCTION" | "UNAVAILABLE"
-}
+import type { ProjectType } from "./project-data"
+import { StackIcons } from "./stack-icons"
 
 interface ProjectProps {
   project: ProjectType
@@ -64,7 +52,7 @@ function healthLabel(health: HealthState) {
     case "DOWN":
       return "Down"
     case "CHECKING":
-      return "Checking…"
+      return "Checking..."
     default:
       return "Unknown"
   }
@@ -85,20 +73,12 @@ function dotClass(health: HealthState) {
   }
 }
 
-/**
- * Heuristic parsing:
- * - If health endpoint returns JSON with { status: "ok" | "pass" | "healthy" }, treat as HEALTHY
- * - If { status: "warn" | "degraded" }, treat as DEGRADED
- * - If { status: "fail" | "down" }, treat as DOWN
- * - Otherwise: any 2xx => HEALTHY, non-2xx/throw => DOWN
- */
 async function checkHealth(url: string): Promise<HealthState> {
   try {
     const finalUrl = `/api/healthcheck?url=${encodeURIComponent(url)}`
     const res = await fetch(finalUrl, {
       method: "GET",
       cache: "no-store",
-      // If your health check needs credentials/cookies, change to "include"
       credentials: "omit",
       headers: { Accept: "application/json, text/plain, */*" },
     })
@@ -107,7 +87,7 @@ async function checkHealth(url: string): Promise<HealthState> {
 
     const data = await res.json()
 
-    if (!data.ok) return "DOWN";
+    if (!data.ok) return "DOWN"
 
     return "HEALTHY"
   } catch {
@@ -116,7 +96,7 @@ async function checkHealth(url: string): Promise<HealthState> {
 }
 
 export function ProjectCard({
-  project: { description, metric, repoUrl, tags, title, healthCheckUrl, liveUrl, status },
+  project: { description, stack, repoUrl, slug, title, healthCheckUrl, liveUrl, status },
 }: ProjectProps) {
   const [health, setHealth] = React.useState<HealthState>(() =>
     healthCheckUrl ? "CHECKING" : "UNKNOWN"
@@ -124,6 +104,7 @@ export function ProjectCard({
 
   React.useEffect(() => {
     let cancelled = false
+
     if (!healthCheckUrl) {
       setHealth("UNKNOWN")
       return
@@ -137,7 +118,6 @@ export function ProjectCard({
 
     run()
 
-    // Optional: keep it fresh every 30s while mounted
     const id = window.setInterval(run, 30_000)
     return () => {
       cancelled = true
@@ -148,17 +128,25 @@ export function ProjectCard({
   const liveDisabled = !liveUrl || status === "UNAVAILABLE"
 
   return (
-    <Card className="relative overflow-hidden border-yellow-400/20 bg-zinc-950/90 shadow-[0_0_34px_rgba(250,204,21,0.10)]">
+    <Card className="group relative overflow-hidden border-yellow-400/20 bg-zinc-950/90 shadow-[0_0_34px_rgba(250,204,21,0.10)] transition hover:-translate-y-0.5 hover:border-yellow-300/35 hover:shadow-[0_0_42px_rgba(250,204,21,0.16)]">
+      <Link
+        href={`/projects/${slug}`}
+        className="absolute inset-0 z-0"
+        aria-label={`Open ${title} case study`}
+      />
+
       <div className="pointer-events-none absolute inset-0">
         <div className="absolute -right-24 -top-24 h-56 w-56 rounded-full bg-yellow-400/10 blur-[70px]" />
       </div>
 
-      <CardHeader className="relative">
+      <CardHeader className="relative z-10">
         <div className="flex items-start justify-between gap-3">
           <div className="min-w-0">
-            <CardTitle className="truncate text-lg">{title}</CardTitle>
+            <div className="flex items-start justify-between gap-3">
+              <CardTitle className="truncate text-lg">{title}</CardTitle>
+              <ArrowUpRight className="mt-0.5 h-4 w-4 shrink-0 text-zinc-500 transition group-hover:text-yellow-200" />
+            </div>
 
-            {/* Project status + health status */}
             <div className="mt-2 flex flex-wrap items-center gap-2">
               <Badge variant="outline" className={cn("h-5 px-2 text-[11px]", statusBadgeStyle(status))}>
                 {status === "DONE" ? "Done" : status === "IN_PRODUCTION" ? "In production" : "Unavailable"}
@@ -173,46 +161,32 @@ export function ProjectCard({
                 {healthLabel(health)}
               </Badge>
 
-              {healthCheckUrl && (
+              {healthCheckUrl ? (
                 <Button
                   type="button"
                   variant="ghost"
                   size="sm"
                   className="h-5 px-2 text-[11px] text-zinc-300 hover:bg-yellow-400/10 hover:text-yellow-200"
                   onClick={() => {
-                    // manual re-check
                     setHealth("CHECKING")
                     checkHealth(healthCheckUrl).then(setHealth)
                   }}
                 >
                   Recheck
                 </Button>
-              )}
+              ) : null}
+
+              <StackIcons stack={stack} className="flex flex-wrap items-center gap-2" />
             </div>
           </div>
-
-          <Badge variant="outline" className="border-yellow-400/25 bg-black/30 text-zinc-200">
-            {metric.label}: <span className="ml-1 text-yellow-200">{metric.value}</span>
-          </Badge>
         </div>
       </CardHeader>
 
-      <CardContent className="relative">
+      <CardContent className="relative z-10">
         <p className="text-sm leading-relaxed text-zinc-300">{description}</p>
-        <div className="mt-4 flex flex-wrap gap-2">
-          {tags.map((t) => (
-            <Badge
-              key={t}
-              variant="outline"
-              className="border-yellow-400/25 bg-zinc-950/40 text-zinc-200"
-            >
-              {t}
-            </Badge>
-          ))}
-        </div>
       </CardContent>
 
-      <CardFooter className="relative flex items-center justify-between gap-3">
+      <CardFooter className="relative z-10 flex items-center justify-between gap-3">
         <Button
           variant="outline"
           disabled={liveDisabled}

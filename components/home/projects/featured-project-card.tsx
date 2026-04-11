@@ -1,18 +1,19 @@
 "use client"
 
 import * as React from "react"
+import Image from "next/image"
+import Link from "next/link"
+import { ArrowUpRight, Github, Globe } from "lucide-react"
+import { cn } from "@/lib/utils"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
-import { ArrowUpRight, Github, Globe } from "lucide-react"
-import { cn } from "@/lib/utils"
-import type { ProjectType } from "./project-card"
-import Image from "next/image"
+import type { ProjectType } from "./project-data"
+import { StackIcons } from "./stack-icons"
 
 function thumbUrl(url?: string) {
-    if (!url) return ""
-    const cleaned = url.trim()
-    return `https://image.thum.io/get/width/1200/noanimate/${cleaned}`
+  if (!url) return ""
+  return `https://image.thum.io/get/width/1200/noanimate/${url.trim()}`
 }
 
 type HealthState = "CHECKING" | "HEALTHY" | "DEGRADED" | "DOWN" | "UNKNOWN"
@@ -52,7 +53,7 @@ function healthLabel(health: HealthState) {
     case "DOWN":
       return "Down"
     case "CHECKING":
-      return "Checking…"
+      return "Checking..."
     default:
       return "Unknown"
   }
@@ -85,9 +86,9 @@ async function checkHealth(url: string): Promise<HealthState> {
 
     if (!res.ok) return "DOWN"
 
-    const data = await res.json();
+    const data = await res.json()
 
-    if (!data.ok) return "DOWN";
+    if (!data.ok) return "DOWN"
 
     return "HEALTHY"
   } catch {
@@ -122,6 +123,7 @@ export function FeaturedProjectCard({
 
     run()
     const id = window.setInterval(run, 30_000)
+
     return () => {
       cancelled = true
       window.clearInterval(id)
@@ -129,14 +131,12 @@ export function FeaturedProjectCard({
   }, [project.healthCheckUrl])
 
   const liveDisabled = !project.liveUrl || project.status === "UNAVAILABLE"
-
-  const previewTarget = project.liveUrl
-  const screenshot = thumbUrl(previewTarget)
+  const screenshot = thumbUrl(project.liveUrl)
 
   return (
     <Card
       className={cn(
-        "relative mb-8 overflow-hidden border-yellow-400/20 bg-zinc-950/90 shadow-[0_0_44px_rgba(250,204,21,0.14)]",
+        "group relative mb-8 overflow-hidden border-yellow-400/20 bg-zinc-950/90 shadow-[0_0_44px_rgba(250,204,21,0.14)] transition hover:-translate-y-0.5 hover:border-yellow-300/35 hover:shadow-[0_0_52px_rgba(250,204,21,0.18)]",
         className
       )}
     >
@@ -145,7 +145,7 @@ export function FeaturedProjectCard({
         <div className="absolute -bottom-28 left-10 h-72 w-72 rounded-full bg-yellow-300/10 blur-[85px]" />
       </div>
 
-      <CardContent className="relative p-6 sm:p-8">
+      <CardContent className="relative z-10 p-6 sm:p-8">
         <div className="flex flex-col gap-5 md:flex-row md:items-start md:justify-between">
           <div className="max-w-2xl">
             <div className="flex flex-wrap items-center gap-2">
@@ -159,26 +159,20 @@ export function FeaturedProjectCard({
                     : "Unavailable"}
               </Badge>
 
-              <Badge variant="outline" className="border-yellow-400/25 bg-black/30 text-zinc-200">
-                {project.metric.label}:{" "}
-                <span className="ml-1 text-yellow-200">{project.metric.value}</span>
-              </Badge>
+              <StackIcons stack={project.stack} className="flex flex-wrap items-center gap-2" />
             </div>
 
-            <h3 className="mt-4 text-2xl font-semibold text-zinc-100">{project.title}</h3>
+            <Link
+              href={`/projects/${project.slug}`}
+              aria-label={`Open ${project.title} case study`}
+            >
+              <div className="mt-4 flex items-start justify-between gap-3">
+                <h3 className="text-2xl font-semibold text-zinc-100">{project.title}</h3>
+                <ArrowUpRight className="mt-1 h-5 w-5 shrink-0 text-zinc-500 transition group-hover:text-yellow-200" />
+              </div>
+            </Link>
+
             <p className="mt-2 text-zinc-300">{project.description}</p>
-
-            <div className="mt-4 flex flex-wrap gap-2">
-              {project.tags.map((t) => (
-                <Badge
-                  key={t}
-                  variant="outline"
-                  className="border-yellow-400/25 bg-zinc-950/40 text-zinc-200"
-                >
-                  {t}
-                </Badge>
-              ))}
-            </div>
 
             <div className="mt-6 flex flex-col gap-3 sm:flex-row">
               <Button
@@ -219,59 +213,57 @@ export function FeaturedProjectCard({
             </div>
           </div>
 
-          {/* Fake preview block */}
           <div className="w-full md:w-90">
             <div className="rounded-2xl border border-yellow-400/15 bg-black/40 p-3 shadow-[inset_0_0_22px_rgba(250,204,21,0.08)]">
-                <div className="flex items-center justify-between">
+              <div className="flex items-center justify-between">
                 <div className="flex items-center gap-2">
-                    <span className="h-2 w-2 rounded-full bg-yellow-300 shadow-[0_0_16px_rgba(250,204,21,0.65)]" />
-                    <span className="text-xs text-zinc-400">preview</span>
+                  <span className="h-2 w-2 rounded-full bg-yellow-300 shadow-[0_0_16px_rgba(250,204,21,0.65)]" />
+                  <span className="text-xs text-zinc-400">preview</span>
                 </div>
 
                 <Badge variant="outline" className={cn("h-5 px-2 text-[11px]", healthBadgeStyle(health))}>
-                    <span className={cn("mr-1 inline-block h-2 w-2 rounded-full", dotClass(health))} />
-                    {healthLabel(health)}
+                  <span className={cn("mr-1 inline-block h-2 w-2 rounded-full", dotClass(health))} />
+                  {healthLabel(health)}
                 </Badge>
-                </div>
+              </div>
 
-                <div className="mt-3 overflow-hidden rounded-xl border border-yellow-400/10">
+              <div className="mt-3 overflow-hidden rounded-xl border border-yellow-400/10">
                 <div className="relative aspect-16/10 w-full bg-zinc-900/60">
-                    {screenshot ? (
+                  {screenshot ? (
                     <Image
-                        src={screenshot}
-                        alt={`${project.title} preview`}
-                        fill
-                        className="object-cover"
-                        sizes="(max-width: 768px) 100vw, 360px"
-                        priority
+                      src={screenshot}
+                      alt={`${project.title} preview`}
+                      fill
+                      className="object-cover"
+                      sizes="(max-width: 768px) 100vw, 360px"
+                      priority
                     />
-                    ) : (
+                  ) : (
                     <div className="absolute inset-0 grid place-items-center">
-                        <span className="text-xs text-zinc-500">No preview url</span>
+                      <span className="text-xs text-zinc-500">No preview url</span>
                     </div>
-                    )}
+                  )}
 
-                    {/* subtle neon overlay */}
-                    <div className="pointer-events-none absolute inset-0 bg-linear-to-tr from-yellow-400/10 via-transparent to-transparent" />
+                  <div className="pointer-events-none absolute inset-0 bg-linear-to-tr from-yellow-400/10 via-transparent to-transparent" />
                 </div>
-                </div>
+              </div>
 
-                {previewTarget && (
+              {project.liveUrl ? (
                 <div className="mt-3 flex justify-end">
-                    <Button
+                  <Button
                     size="sm"
                     variant="ghost"
                     className="h-7 px-2 text-[11px] text-zinc-300 hover:bg-yellow-400/10 hover:text-yellow-200"
                     asChild
-                    >
-                    <a href={previewTarget} target="_blank" rel="noreferrer">
-                        Open <ArrowUpRight className="ml-1 h-3.5 w-3.5" />
+                  >
+                    <a href={project.liveUrl} target="_blank" rel="noreferrer">
+                      Open <ArrowUpRight className="ml-1 h-3.5 w-3.5" />
                     </a>
-                    </Button>
+                  </Button>
                 </div>
-                )}
+              ) : null}
             </div>
-            </div>
+          </div>
         </div>
       </CardContent>
     </Card>

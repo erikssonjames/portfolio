@@ -1,158 +1,60 @@
 "use client";
 
-import { useCallback, useEffect, useMemo, useRef } from "react";
-import { randomize, step } from "./lib/gol";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { drawRoundedRect, drawVignette, parseRgb, rgbToStr, stampSparseDisc } from "./lib/canvas";
+import { randomize, step } from "./lib/gol";
 import { useGol } from "./gol-context";
+import type { GolSettings } from "./game-of-life-settings";
 
-const GAP = 1;
-
-type ClickEffect = { x: number; y: number; t: number };
-
-type PaintState = {
-  isDown: boolean;
-  startedAt: number;
-  lastPaintAt: number;
-  pointerId: number | null;
-  x: number;
-  y: number;
+type GridDims = {
+  cols: number;
+  rows: number;
 };
+
+const CELL_GAP = 1;
+const BRUSH_PROTECTION_TICKS = 3;
+const BRUSH_ACTIVE_MS = 120;
+const MAX_DPR = 1.5;
+
+function getBrushRadiusCells(settings: GolSettings, startedAt: number, now: number) {
+  const targetRadius = Math.max(1, Math.round(settings.brushMaxRadius / 4));
+  const growthMs = Math.max(1, settings.brushGrowthMs);
+  const elapsed = Math.max(0, now - startedAt);
+  const progress = Math.min(1, elapsed / growthMs);
+  return Math.max(1, Math.round(1 + (targetRadius - 1) * progress));
+}
 
 export function GameOfLifeCanvas() {
   const { isPlaying, restartToken, randomizeToken, settings, updateLocalDeaths, updateLocalRebirths } = useGol();
 
-  // latest settings in RAF loop
-  const settingsRef = useRef(settings);
-  const canvasRef = useRef<HTMLCanvasElement | null>(null);
-  const currentRef = useRef<Uint8Array | null>(null);
-  const nextRef = useRef<Uint8Array | null>(null);
-  const dimsRef = useRef({ cols: 0, rows: 0 });
-  const rafRef = useRef<number | null>(null);
-  const lastTRef = useRef(0);
-  const accRef = useRef(0);
-  const effectsRef = useRef<ClickEffect[]>([]);
-  const isPlayingRef = useRef(true);
-
-  const aliveProbeRef = useRef<HTMLDivElement | null>(null);
-  const deadProbeRef = useRef<HTMLDivElement | null>(null);
-  const baseColorsRef = useRef({
+  const [baseColors, setBaseColors] = useState({
     aliveCss: "rgb(253,224,71)",
     deadCss: "rgb(0,0,0)",
-    radiusPx: 2,
   });
-
-  // Hover helpers
+  const settingsRef = useRef(settings);
+  const isPlayingRef = useRef(isPlaying);
+  const canvasRef = useRef<HTMLCanvasElement | null>(null);
+  const containerRef = useRef<HTMLDivElement | null>(null);
+  const brushOutlineRef = useRef<HTMLDivElement | null>(null);
+  const aliveProbeRef = useRef<HTMLDivElement | null>(null);
+  const deadProbeRef = useRef<HTMLDivElement | null>(null);
+  const boardRef = useRef<Uint8Array>(new Uint8Array());
+  const nextBoardRef = useRef<Uint8Array>(new Uint8Array());
+  const protectionRef = useRef<Uint8Array>(new Uint8Array());
+  const dimsRef = useRef<GridDims>({ cols: 0, rows: 0 });
+  const timerRef = useRef<number | null>(null);
   const lastHoverCellRef = useRef<{ x: number; y: number } | null>(null);
+  const brushVisibleRef = useRef(false);
+  const brushPointRef = useRef({ x: 0, y: 0 });
+  const brushStartedAtRef = useRef(0);
+  const brushActiveUntilRef = useRef(0);
+  useEffect(() => {
+    settingsRef.current = settings;
+  }, [settings]);
 
-  // Pointer-hold paint state
-  const paintRef = useRef<PaintState>({
-    isDown: false,
-    startedAt: 0,
-    lastPaintAt: 0,
-    pointerId: null,
-    x: 0,
-    y: 0,
-  });
-
-  // Theme mapping:
-  // - classic uses the probed Tailwind colors
-  // - mono uses a high-contrast silver-on-charcoal palette
-  // - neon uses an explicit electric cyan palette instead of mixing with the base yellow
-  const computeThemeColors = useCallback(() => {
-    const s = settingsRef.current;
-    const baseAlive = parseRgb(baseColorsRef.current.aliveCss) ?? { r: 253, g: 224, b: 71 };
-    const baseDead = parseRgb(baseColorsRef.current.deadCss) ?? { r: 0, g: 0, b: 0 };
-
-    if (s.theme === "classic") {
-      return { alive: rgbToStr(baseAlive), dead: rgbToStr(baseDead) };
-    }
-
-    if (s.theme === "mono") {
-      const alive = { r: 232, g: 234, b: 237 };
-      const dead = { r: 12, g: 12, b: 16 };
-      return { alive: rgbToStr(alive), dead: rgbToStr(dead) };
-    }
-
-    const alive = { r: 56, g: 244, b: 214 };
-    const dead = { r: 4, g: 10, b: 20 };
-
-    return { alive: rgbToStr(alive), dead: rgbToStr(dead) };
-  }, []);
-
-  const rebuild = useCallback(() => {
-    const canvas = canvasRef.current;
-    if (!canvas) return;
-
-    const s = settingsRef.current;
-
-    const width = window.innerWidth;
-    const height = window.innerHeight;
-
-    const cols = Math.floor(width / s.cellSize) + 2;
-    const rows = Math.floor(height / s.cellSize) + 2;
-    dimsRef.current = { cols, rows };
-
-    canvas.width = cols * s.cellSize;
-    canvas.height = rows * s.cellSize;
-
-    currentRef.current = new Uint8Array(cols * rows);
-    nextRef.current = new Uint8Array(cols * rows);
-    randomize(currentRef.current, s.randomFill);
-
-    lastTRef.current = 0;
-    accRef.current = 0;
-
-    lastHoverCellRef.current = null;
-    paintRef.current.isDown = false;
-
-
-  }, []);
-
-  const restart = useCallback(() => {
-    const s = settingsRef.current;
-    const { cols, rows } = dimsRef.current;
-    if (!cols || !rows || !currentRef.current) return;
-    randomize(currentRef.current, s.randomFill);
-    lastTRef.current = 0;
-    accRef.current = 0;
-  }, []);
-
-  const handlePointerMoveXY = (px: number, py: number) => {
-    const canvas = canvasRef.current;
-    const board = currentRef.current;
-    if (!canvas || !board) return;
-
-    const { cols, rows } = dimsRef.current;
-    const s = settingsRef.current;
-
-    if (s.disableBrush) return;
-
-    paintRef.current.x = px;
-    paintRef.current.y = py;
-
-    const cx = Math.floor(px / s.cellSize);
-    const cy = Math.floor(py / s.cellSize);
-
-    if (cx < 0 || cy < 0 || cx >= cols || cy >= rows) return;
-
-    const last = lastHoverCellRef.current;
-    if (last && last.x === cx && last.y === cy) return;
-    lastHoverCellRef.current = { x: cx, y: cy };
-
-    const { rebirths } = stampSparseDisc({
-      board,
-      cols,
-      rows,
-      cx,
-      cy,
-      radius: 2,
-      density: 0.35,
-      seed: (cx * 83492791) ^ (cy * 297657976),
-      ringBias: 0.25,
-    });
-
-    if (rebirths) updateLocalRebirths(rebirths);
-  };
+  useEffect(() => {
+    isPlayingRef.current = isPlaying;
+  }, [isPlaying]);
 
   const probeClasses = useMemo(
     () => ({
@@ -162,234 +64,350 @@ export function GameOfLifeCanvas() {
     []
   );
 
-  useEffect(() => {
-    settingsRef.current = settings;
-  }, [settings]);
+  const themeColors = useMemo(() => {
+    const baseAlive = parseRgb(baseColors.aliveCss) ?? { r: 253, g: 224, b: 71 };
+    const baseDead = parseRgb(baseColors.deadCss) ?? { r: 0, g: 0, b: 0 };
 
-  useEffect(() => {
-    isPlayingRef.current = isPlaying;
-  }, [isPlaying]);
+    if (settings.theme === "classic") {
+      return {
+        alive: rgbToStr(baseAlive),
+        dead: rgbToStr(baseDead),
+        glowBlur: Math.max(6, settings.glowStrength),
+      };
+    }
 
-  useEffect(() => {
-    rebuild();
-  }, [settings.cellSize, rebuild]);
+    if (settings.theme === "mono") {
+      return {
+        alive: "rgb(232,234,237)",
+        dead: "rgb(12,12,16)",
+        glowBlur: Math.max(4, settings.glowStrength * 0.8),
+      };
+    }
 
-  useEffect(() => {
+    return {
+      alive: "rgb(56,244,214)",
+      dead: "rgb(4,10,20)",
+      glowBlur: Math.max(8, settings.glowStrength * 1.25),
+    };
+  }, [baseColors.aliveCss, baseColors.deadCss, settings]);
+
+  const renderBoard = useCallback(() => {
     const canvas = canvasRef.current;
-    const aliveProbe = aliveProbeRef.current;
-    const deadProbe = deadProbeRef.current;
-    if (!canvas || !aliveProbe || !deadProbe) return;
+    if (!canvas) return;
 
     const ctx = canvas.getContext("2d");
     if (!ctx) return;
 
-    const updateBaseColorsFromProbes = () => {
-      const aliveCS = getComputedStyle(aliveProbe);
-      const deadCS = getComputedStyle(deadProbe);
+    const { cols, rows } = dimsRef.current;
+    const board = boardRef.current;
+    const s = settingsRef.current;
+    if (!cols || !rows || board.length === 0) return;
 
-      baseColorsRef.current = {
-        aliveCss: aliveCS.backgroundColor,
-        deadCss: deadCS.backgroundColor,
-        radiusPx: Number.parseFloat(aliveCS.borderTopLeftRadius) || 2,
-      };
-    };
+    const dpr = Math.min(window.devicePixelRatio || 1, MAX_DPR);
+    const width = cols * s.cellSize;
+    const height = rows * s.cellSize;
 
-    updateBaseColorsFromProbes();
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    ctx.clearRect(0, 0, width, height);
 
-    const render = () => {
-      const { cols, rows } = dimsRef.current;
-      const board = currentRef.current;
-      if (!board || cols === 0 || rows === 0) return;
+    const { alive, dead, glowBlur } = themeColors;
+    ctx.fillStyle = dead;
+    ctx.fillRect(0, 0, width, height);
 
-      const s = settingsRef.current;
-      const { alive, dead } = computeThemeColors();
-      const radiusPx = baseColorsRef.current.radiusPx;
+    const inset = CELL_GAP;
+    const size = s.cellSize - inset * 2;
+    const radius = Math.max(0, Math.min(Math.floor(s.cellSize * 0.12), size / 2));
 
-      const W = cols * s.cellSize;
-      const H = rows * s.cellSize;
+    ctx.save();
+    ctx.fillStyle = alive;
+    ctx.shadowColor = alive;
+    ctx.shadowBlur = glowBlur;
 
-      // background
-      ctx.save();
-      ctx.fillStyle = dead;
-      ctx.fillRect(0, 0, W, H);
-      ctx.restore();
+    for (let y = 0; y < rows; y++) {
+      const rowOffset = y * cols;
+      const py = y * s.cellSize + inset;
+      for (let x = 0; x < cols; x++) {
+        if (board[rowOffset + x] !== 1) continue;
 
-      // alive cells
-      ctx.save();
-      ctx.fillStyle = alive;
-      ctx.shadowColor = alive;
-
-      // a tiny bit more glow in neon, a bit less in mono, otherwise settings.glowStrength
-      const themeGlowMul = s.theme === "neon" ? 1.25 : s.theme === "mono" ? 0.85 : 1;
-      ctx.shadowBlur = Math.round(s.glowStrength * themeGlowMul);
-
-      const inset = GAP;
-      const w = s.cellSize - inset * 2;
-      const h = s.cellSize - inset * 2;
-      const r = Math.max(0, Math.min(radiusPx, w / 2, h / 2));
-
-      for (let y = 0; y < rows; y++) {
-        const rowOff = y * cols;
-        const py = y * s.cellSize + inset;
-        for (let x = 0; x < cols; x++) {
-          if (board[rowOff + x] === 1) {
-            const px = x * s.cellSize + inset;
-            if (r > 0) drawRoundedRect(ctx, px, py, w, h, r);
-            else ctx.fillRect(px, py, w, h);
-          }
-        }
+        const px = x * s.cellSize + inset;
+        if (radius > 0) drawRoundedRect(ctx, px, py, size, size, radius);
+        else ctx.fillRect(px, py, size, size);
       }
+    }
 
-      // click ripple effect uses alive color too
-      if (effectsRef.current.length) {
-        ctx.save();
+    ctx.restore();
 
-        for (const fx of effectsRef.current) {
-          const p = fx.t / 450;
-          const ease = 1 - Math.pow(1 - p, 3);
-          const radius = 8 + ease * 80;
+    ctx.save();
+    ctx.fillStyle = `rgba(0, 0, 0, ${Math.max(Math.abs((s.backgroundOpacity - 100) / 100))})`;
+    ctx.fillRect(0, 0, width, height);
+    ctx.restore();
 
-          ctx.globalAlpha = (1 - p) * 0.7;
-          ctx.lineWidth = 2;
-          ctx.strokeStyle = alive;
-          ctx.beginPath();
-          ctx.arc(fx.x, fx.y, radius, 0, Math.PI * 2);
-          ctx.stroke();
+    if (s.showVignette) {
+      drawVignette(ctx, width, height);
+    }
+  }, [themeColors]);
 
-          ctx.globalAlpha = (1 - p) * 0.25;
-          ctx.lineWidth = 6;
-          ctx.beginPath();
-          ctx.arc(fx.x, fx.y, radius * 0.75, 0, Math.PI * 2);
-          ctx.stroke();
-
-          ctx.globalAlpha = (1 - p) * 0.35;
-          ctx.lineWidth = 2;
-          for (let i = 0; i < 10; i++) {
-            const a = (i / 10) * Math.PI * 2 + p * 1.2;
-            const r1 = radius * 0.35;
-            const r2 = radius * 0.55;
-            ctx.beginPath();
-            ctx.moveTo(fx.x + Math.cos(a) * r1, fx.y + Math.sin(a) * r1);
-            ctx.lineTo(fx.x + Math.cos(a) * r2, fx.y + Math.sin(a) * r2);
-            ctx.stroke();
-          }
-        }
-
-        ctx.restore();
-      }
-
-      ctx.restore();
-
-      if (s.showVignette) drawVignette(ctx, W, H);
-    };
-
-    const onResize = () => rebuild();
-    window.addEventListener("resize", onResize);
-
-    rebuild();
-
-    const loop = (t: number) => {
-      if (!lastTRef.current) lastTRef.current = t;
-      
-      const dtRaw = t - lastTRef.current;
-      const dt = Math.min(dtRaw, 50);
-
-      if (effectsRef.current.length) {
-        for (const fx of effectsRef.current) fx.t += dt;
-        effectsRef.current = effectsRef.current.filter((fx) => fx.t < 450);
-      }
-
-      lastTRef.current = t;
-      accRef.current += dt;
-
-      const s = settingsRef.current;
-      const { cols, rows } = dimsRef.current;
-      const current = currentRef.current;
-      const next = nextRef.current;
-
-      const shouldAdvance = isPlayingRef.current && !(s.pauseWhilePainting && paintRef.current.isDown);
-
-      if (shouldAdvance && current && next && cols && rows) {
-        let steps = 0;
-        const maxSteps = 3;
-        while (accRef.current >= s.tickMs && steps < maxSteps && shouldAdvance) {
-          const { deaths, rebirths } = step(current, next, cols, rows);
-          
-          if (deaths) updateLocalDeaths(deaths);
-          if (rebirths) updateLocalRebirths(rebirths);
-
-          currentRef.current = next;
-          nextRef.current = current;
-          accRef.current -= s.tickMs;
-          steps++;
-        }
-      }
-
-      render();
-      rafRef.current = requestAnimationFrame(loop);
-    };
-
-    rafRef.current = requestAnimationFrame(loop);
-
-    return () => {
-      window.removeEventListener("resize", onResize);
-      if (rafRef.current) cancelAnimationFrame(rafRef.current);
-    };
-  }, [rebuild, computeThemeColors]);
-
-  useEffect(() => {
-    restart();
-  }, [restartToken, restart]);
-
-  useEffect(() => {
-    const b = currentRef.current;
-    if (!b) return;
-    randomize(b, settingsRef.current.randomFill);
-  }, [randomizeToken]);
-
-  useEffect(() => {
+  const resizeBoard = useCallback(() => {
     const canvas = canvasRef.current;
     if (!canvas) return;
 
-    const toCanvasXY = (clientX: number, clientY: number) => {
-      const rect = canvas.getBoundingClientRect();
+    const s = settingsRef.current;
+    const cols = Math.max(1, Math.ceil(window.innerWidth / s.cellSize));
+    const rows = Math.max(1, Math.ceil(window.innerHeight / s.cellSize));
+    const dpr = Math.min(window.devicePixelRatio || 1, MAX_DPR);
+    const width = cols * s.cellSize;
+    const height = rows * s.cellSize;
+
+    dimsRef.current = { cols, rows };
+    canvas.width = Math.round(width * dpr);
+    canvas.height = Math.round(height * dpr);
+    canvas.style.width = `${width}px`;
+    canvas.style.height = `${height}px`;
+
+    boardRef.current = new Uint8Array(cols * rows);
+    nextBoardRef.current = new Uint8Array(cols * rows);
+    protectionRef.current = new Uint8Array(cols * rows);
+    randomize(boardRef.current, s.randomFill);
+    lastHoverCellRef.current = null;
+    renderBoard();
+  }, [renderBoard]);
+
+  const restartBoard = useCallback(() => {
+    const next = new Uint8Array(boardRef.current.length);
+    randomize(next, settingsRef.current.randomFill);
+    boardRef.current = next;
+    nextBoardRef.current = new Uint8Array(next.length);
+    protectionRef.current = new Uint8Array(next.length);
+    renderBoard();
+  }, [renderBoard]);
+
+  const randomizeBoard = useCallback(() => {
+    const next = new Uint8Array(boardRef.current.length);
+    randomize(next, settingsRef.current.randomFill);
+    boardRef.current = next;
+    protectionRef.current = new Uint8Array(next.length);
+    renderBoard();
+  }, [renderBoard]);
+
+  const updateBrushOutline = useCallback(() => {
+    const outline = brushOutlineRef.current;
+    if (!outline) return;
+
+    const radiusCells = getBrushRadiusCells(settingsRef.current, brushStartedAtRef.current, performance.now());
+    const diameter = settingsRef.current.cellSize * (radiusCells * 2 + 1);
+    outline.style.width = `${diameter}px`;
+    outline.style.height = `${diameter}px`;
+    outline.style.transform = `translate(${brushPointRef.current.x - diameter / 2}px, ${brushPointRef.current.y - diameter / 2}px)`;
+    outline.style.opacity = brushVisibleRef.current && !settingsRef.current.disableBrush ? "1" : "0";
+  }, []);
+
+  const handlePointerMoveXY = useCallback(
+    (px: number, py: number) => {
+      const { cols, rows } = dimsRef.current;
+      const currentBoard = boardRef.current;
+      const s = settingsRef.current;
+
+      if (!currentBoard.length || !cols || !rows || s.disableBrush) return;
+
+      const cx = Math.floor(px / s.cellSize);
+      const cy = Math.floor(py / s.cellSize);
+      if (cx < 0 || cy < 0 || cx >= cols || cy >= rows) return;
+
+      const last = lastHoverCellRef.current;
+      if (last && last.x === cx && last.y === cy) return;
+      lastHoverCellRef.current = { x: cx, y: cy };
+
+      const now = performance.now();
+      brushActiveUntilRef.current = now + BRUSH_ACTIVE_MS;
+      const radius = getBrushRadiusCells(s, brushStartedAtRef.current || now, now);
+      const next = currentBoard.slice();
+      const { rebirths } = stampSparseDisc({
+        board: next,
+        cols,
+        rows,
+        cx,
+        cy,
+        radius,
+        density: s.brushDensity,
+        seed: (cx * 83492791) ^ (cy * 297657976),
+        ringBias: 0.25,
+      });
+
+      if (!rebirths) return;
+
+      const protection = protectionRef.current;
+      for (let i = 0; i < next.length; i++) {
+        if (currentBoard[i] !== next[i]) {
+          protection[i] = BRUSH_PROTECTION_TICKS;
+        }
+      }
+
+      boardRef.current = next;
+      updateLocalRebirths(rebirths);
+      renderBoard();
+    },
+    [renderBoard, updateLocalRebirths]
+  );
+
+  useEffect(() => {
+    const aliveProbe = aliveProbeRef.current;
+    const deadProbe = deadProbeRef.current;
+    if (!aliveProbe || !deadProbe) return;
+
+    const aliveCS = getComputedStyle(aliveProbe);
+    const deadCS = getComputedStyle(deadProbe);
+    setBaseColors({
+      aliveCss: aliveCS.backgroundColor,
+      deadCss: deadCS.backgroundColor,
+    });
+    renderBoard();
+  }, [renderBoard]);
+
+  useEffect(() => {
+    resizeBoard();
+
+    const onResize = () => resizeBoard();
+    window.addEventListener("resize", onResize);
+    return () => window.removeEventListener("resize", onResize);
+  }, [resizeBoard, settings.cellSize]);
+
+  useEffect(() => {
+    renderBoard();
+    updateBrushOutline();
+  }, [
+    renderBoard,
+    updateBrushOutline,
+    settings.backgroundOpacity,
+    settings.glowStrength,
+    settings.showVignette,
+    settings.theme,
+    settings.disableBrush,
+    settings.brushMaxRadius,
+    settings.brushGrowthMs,
+  ]);
+
+  useEffect(() => {
+    const runLoop = () => {
+      if (timerRef.current) {
+        window.clearTimeout(timerRef.current);
+      }
+
+      timerRef.current = window.setTimeout(() => {
+        const isBrushActive = brushActiveUntilRef.current > performance.now();
+        const shouldAdvance = isPlayingRef.current && !(settingsRef.current.pauseWhilePainting && isBrushActive);
+
+        if (shouldAdvance) {
+          const current = boardRef.current;
+          const next = nextBoardRef.current;
+          const { cols, rows } = dimsRef.current;
+
+          if (current.length && next.length && cols && rows) {
+            const { deaths, rebirths } = step(current, next, cols, rows);
+            const protection = protectionRef.current;
+            let preventedDeaths = 0;
+
+            for (let i = 0; i < next.length; i++) {
+              if (protection[i] > 0) {
+                if (current[i] === 1 && next[i] === 0) {
+                  next[i] = 1;
+                  preventedDeaths++;
+                }
+                protection[i] -= 1;
+              }
+            }
+
+            if (deaths - preventedDeaths > 0) updateLocalDeaths(deaths - preventedDeaths);
+            if (rebirths) updateLocalRebirths(rebirths);
+
+            boardRef.current = next.slice();
+            nextBoardRef.current = current;
+            renderBoard();
+          }
+        }
+
+        runLoop();
+      }, settingsRef.current.tickMs);
+    };
+
+    runLoop();
+
+    return () => {
+      if (timerRef.current) {
+        window.clearTimeout(timerRef.current);
+      }
+    };
+  }, [renderBoard, updateLocalDeaths, updateLocalRebirths]);
+
+  useEffect(() => {
+    restartBoard();
+  }, [restartBoard, restartToken]);
+
+  useEffect(() => {
+    randomizeBoard();
+  }, [randomizeBoard, randomizeToken]);
+
+  useEffect(() => {
+    const container = containerRef.current;
+    if (!container) return;
+
+    const toBoardXY = (clientX: number, clientY: number) => {
+      const rect = container.getBoundingClientRect();
       return { x: clientX - rect.left, y: clientY - rect.top, rect };
     };
 
-    const isInside = (x: number, y: number, rect: DOMRect) =>
-      x >= 0 && y >= 0 && x <= rect.width && y <= rect.height;
-
     const onMove = (e: PointerEvent) => {
-      const { x, y, rect } = toCanvasXY(e.clientX, e.clientY);
-      if (!isInside(x, y, rect)) return;
+      const { x, y, rect } = toBoardXY(e.clientX, e.clientY);
+      if (x < 0 || y < 0 || x > rect.width || y > rect.height) {
+        brushVisibleRef.current = false;
+        brushStartedAtRef.current = 0;
+        updateBrushOutline();
+        return;
+      }
+
+      if (!brushVisibleRef.current) {
+        brushStartedAtRef.current = performance.now();
+      }
+
+      brushVisibleRef.current = true;
+      brushPointRef.current = { x, y };
+      updateBrushOutline();
       handlePointerMoveXY(x, y);
     };
 
+    const onLeave = () => {
+      brushVisibleRef.current = false;
+      brushStartedAtRef.current = 0;
+      updateBrushOutline();
+    };
+
     window.addEventListener("pointermove", onMove, { capture: true });
+    window.addEventListener("pointerleave", onLeave);
 
     return () => {
       window.removeEventListener("pointermove", onMove, { capture: true });
+      window.removeEventListener("pointerleave", onLeave);
     };
-  }, []);
+  }, [handlePointerMoveXY, updateBrushOutline]);
 
   return (
-    <div className="relative size-full overflow-hidden">
-      {/* Tailwind style probes */}
+    <div
+      ref={containerRef}
+      className="gol-grid-shell relative size-full overflow-hidden"
+      style={
+        {
+          "--gol-alive": themeColors.alive,
+          "--gol-dead": themeColors.dead,
+          "--gol-glow-size": `${themeColors.glowBlur}px`,
+        } as CSSProperties
+      }
+    >
       <div className="pointer-events-none absolute opacity-0">
         <div ref={deadProbeRef} className={probeClasses.dead} />
         <div ref={aliveProbeRef} className={probeClasses.alive} />
       </div>
 
-      <canvas
-        ref={canvasRef}
-        className="block touch-none relative z-0"
-        style={{ imageRendering: "pixelated" }}
-      />
-
-      <div 
-        className="pointer-events-none z-10 bg-background absolute inset-0" 
-        style={{ opacity: Math.max(Math.abs((settings.backgroundOpacity - 100) / 100)) }}
-      />
+      <canvas ref={canvasRef} className="gol-canvas absolute left-0 top-0 z-0 block" />
+      <div ref={brushOutlineRef} className="gol-brush-outline pointer-events-none absolute left-0 top-0 z-[1]" />
     </div>
   );
 }

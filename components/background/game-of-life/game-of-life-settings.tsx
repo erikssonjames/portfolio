@@ -3,8 +3,6 @@
 import * as React from "react"
 import {
   Brush,
-  Gauge,
-  Grid3X3,
   Palette,
   Play,
   RefreshCw,
@@ -12,13 +10,14 @@ import {
   SunMedium,
   Wand2,
 } from "lucide-react"
+
 import { Button } from "@/components/ui/button"
-import { ButtonGroup } from "@/components/ui/button-group"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Label } from "@/components/ui/label"
 import { Separator } from "@/components/ui/separator"
 import { Slider } from "@/components/ui/slider"
 import { Switch } from "@/components/ui/switch"
+import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group"
 
 export type GolSettings = {
   backgroundOpacity: number
@@ -57,65 +56,117 @@ type GameOfLifeSettingsPanelProps = {
   onRandomize?: () => void
 }
 
-type PresetButtonGroupProps<T extends string | number> = {
+type SectionCardProps = {
   icon: React.ComponentType<{ className?: string }>
+  title: string
+  children: React.ReactNode
+  trailing?: React.ReactNode
+}
+
+type MiniFieldProps = {
+  label: string
+  children: React.ReactNode
+}
+
+type SegmentedOption<T extends string | number> = {
   label: string
   value: T
-  options: Array<{ label: string; value: T }>
+}
+
+type SegmentedControlProps<T extends string | number> = {
+  value: T
+  options: SegmentedOption<T>[]
   onChange: (next: T) => void
 }
 
-type SectionHeaderProps = {
-  icon: React.ComponentType<{ className?: string }>
-  title: string
-}
-
-function SectionHeader({ icon: Icon, title }: SectionHeaderProps) {
+function SectionCard({ icon: Icon, title, children, trailing }: SectionCardProps) {
   return (
-    <div className="flex items-center gap-2 text-sm font-medium text-zinc-100">
-      <div className="rounded-xl border border-white/10 bg-white/5 p-2">
-        <Icon className="h-4 w-4 text-yellow-200" />
+    <div className="space-y-3 rounded-2xl border border-white/8 bg-white/3 p-4">
+      <div className="flex items-center justify-between gap-3">
+        <div className="flex items-center gap-2 text-sm font-medium text-zinc-100">
+          <div className="rounded-xl border border-white/10 bg-white/5 p-2">
+            <Icon className="h-4 w-4 text-yellow-200" />
+          </div>
+          <span>{title}</span>
+        </div>
+
+        {trailing}
       </div>
-      <span>{title}</span>
+
+      {children}
     </div>
   )
 }
 
-function PresetButtonGroup<T extends string | number>({
-  icon: Icon,
-  label,
+function MiniField({ label, children }: MiniFieldProps) {
+  return (
+    <div className="rounded-xl p-2.5">
+      <div className="mb-2 text-[11px] font-medium uppercase tracking-[0.16em] text-zinc-400">
+        {label}
+      </div>
+      {children}
+    </div>
+  )
+}
+
+function SegmentedControl<T extends string | number>({
   value,
   options,
   onChange,
-}: PresetButtonGroupProps<T>) {
+}: SegmentedControlProps<T>) {
   return (
-    <div className="grid gap-2">
-      <div className="flex items-center gap-2 text-xs font-medium uppercase tracking-[0.18em] text-zinc-400">
-        <Icon className="h-3.5 w-3.5 text-zinc-500" />
-        <span>{label}</span>
+    <ToggleGroup
+      type="single"
+      value={String(value)}
+      onValueChange={(next) => {
+        if (!next) return
+        const found = options.find((option) => String(option.value) === next)
+        if (found) onChange(found.value)
+      }}
+      className="w-full justify-start gap-1"
+    >
+      {options.map((option) => (
+        <ToggleGroupItem
+          key={String(option.value)}
+          value={String(option.value)}
+          aria-label={option.label}
+          className="h-8 min-w-0 flex-1 rounded-lg border border-white/10 bg-white/5 px-2 text-xs text-zinc-200 hover:bg-white/10 data-[state=on]:bg-white data-[state=on]:text-black"
+        >
+          {option.label}
+        </ToggleGroupItem>
+      ))}
+    </ToggleGroup>
+  )
+}
+
+function SliderField({
+  icon: Icon,
+  label,
+  valueLabel,
+  children,
+  trailing,
+}: {
+  icon: React.ComponentType<{ className?: string }>
+  label: string
+  valueLabel: string
+  children: React.ReactNode
+  trailing?: React.ReactNode
+}) {
+  return (
+    <div className="rounded-xl border border-white/8 bg-black/20 p-3">
+      <div className="mb-2 flex items-center justify-between gap-3">
+        <div className="flex items-center gap-2 text-sm text-zinc-200">
+          <Icon className="h-4 w-4 text-zinc-500" />
+          <Label className="text-white">{label}</Label>
+        </div>
+
+        <div className="flex items-center gap-3">
+          {trailing}
+          <span className="text-xs text-zinc-400">{valueLabel}</span>
+        </div>
       </div>
 
-      <ButtonGroup className="flex-wrap">
-        {options.map((option) => {
-          const active = option.value === value
-
-          return (
-            <Button
-              key={String(option.value)}
-              size="sm"
-              variant={active ? "secondary" : "outline"}
-              className={
-                active
-                  ? "bg-white text-black hover:bg-white/90"
-                  : "border-white/10 bg-white/5 text-white hover:bg-white/10"
-              }
-              onClick={() => onChange(option.value)}
-            >
-              {option.label}
-            </Button>
-          )
-        })}
-      </ButtonGroup>
+      {children}
     </div>
   )
 }
@@ -132,7 +183,7 @@ export function GameOfLifeSettingsPanel({
   )
 
   return (
-    <Card className="w-[26rem] max-w-[92vw] border-white/10 bg-black/85 text-white shadow-xl backdrop-blur">
+    <Card className="w-104 max-w-[92vw] border-white/10 bg-black/85 text-white shadow-xl backdrop-blur">
       <CardHeader className="pb-3">
         <CardTitle className="flex items-center gap-2 text-base">
           <Sparkles className="h-4 w-4 text-yellow-200" />
@@ -141,138 +192,146 @@ export function GameOfLifeSettingsPanel({
       </CardHeader>
 
       <CardContent className="space-y-4">
-        <div className="space-y-3 rounded-2xl border border-white/8 bg-white/3 p-4">
-          <SectionHeader icon={Play} title="Simulation" />
+        <SectionCard icon={Play} title="Simulation">
+          <div className="grid grid-cols-2 gap-2">
+            <MiniField label="Theme">
+              <SegmentedControl
+                value={value.theme}
+                onChange={(theme) => set({ theme })}
+                options={[
+                  { label: "Classic", value: "classic" },
+                  { label: "Neon", value: "neon" },
+                  { label: "Mono", value: "mono" },
+                ]}
+              />
+            </MiniField>
 
-          <PresetButtonGroup
-            icon={Palette}
-            label="Theme"
-            value={value.theme}
-            onChange={(theme) => set({ theme })}
-            options={[
-              { label: "Classic", value: "classic" },
-              { label: "Neon", value: "neon" },
-              { label: "Mono", value: "mono" },
-            ]}
-          />
+            <MiniField label="Speed">
+              <SegmentedControl
+                value={value.tickMs}
+                onChange={(tickMs) => set({ tickMs })}
+                options={[
+                  { label: "Slow", value: 420 },
+                  { label: "Med", value: 300 },
+                  { label: "Fast", value: 180 },
+                ]}
+              />
+            </MiniField>
 
-          <PresetButtonGroup
-            icon={Grid3X3}
-            label="Grid"
-            value={value.cellSize}
-            onChange={(cellSize) => set({ cellSize })}
-            options={[
-              { label: "Tight", value: 18 },
-              { label: "Balanced", value: 30 },
-              { label: "Chunky", value: 42 },
-            ]}
-          />
+            <MiniField label="Grid">
+              <SegmentedControl
+                value={value.cellSize}
+                onChange={(cellSize) => set({ cellSize })}
+                options={[
+                  { label: "18", value: 18 },
+                  { label: "30", value: 30 },
+                  { label: "42", value: 42 },
+                ]}
+              />
+            </MiniField>
 
-          <PresetButtonGroup
-            icon={Gauge}
-            label="Speed"
-            value={value.tickMs}
-            onChange={(tickMs) => set({ tickMs })}
-            options={[
-              { label: "Slow", value: 420 },
-              { label: "Medium", value: 300 },
-              { label: "Fast", value: 180 },
-            ]}
-          />
-
-          <PresetButtonGroup
-            icon={Wand2}
-            label="Fill"
-            value={value.randomFill}
-            onChange={(randomFill) => set({ randomFill })}
-            options={[
-              { label: "Sparse", value: 0.32 },
-              { label: "Balanced", value: 0.5 },
-              { label: "Dense", value: 0.68 },
-            ]}
-          />
-        </div>
-
-        <div className="space-y-3 rounded-2xl border border-white/8 bg-white/3 p-4">
-          <SectionHeader icon={Brush} title="Brush" />
-
-          <div className="flex items-center justify-between rounded-2xl border border-white/8 bg-black/20 px-3 py-2.5">
-            <div className="flex items-center gap-2 text-sm text-zinc-200">
-              <PauseWhilePaintIcon />
-              <span>Pause while painting</span>
-            </div>
-            <Switch
-              checked={value.pauseWhilePainting}
-              onCheckedChange={(checked) => set({ pauseWhilePainting: checked })}
-            />
+            <MiniField label="Fill">
+              <SegmentedControl
+                value={value.randomFill}
+                onChange={(randomFill) => set({ randomFill })}
+                options={[
+                  { label: "Low", value: 0.32 },
+                  { label: "Mid", value: 0.5 },
+                  { label: "High", value: 0.68 },
+                ]}
+              />
+            </MiniField>
           </div>
+        </SectionCard>
 
-          <PresetButtonGroup
-            icon={Brush}
-            label="Size"
-            value={value.brushMaxRadius}
-            onChange={(brushMaxRadius) => set({ brushMaxRadius })}
-            options={[
-              { label: "Small", value: 6 },
-              { label: "Medium", value: 10 },
-              { label: "Large", value: 16 },
-            ]}
-          />
+        <SectionCard
+          icon={Brush}
+          title="Brush"
+          trailing={
+            <div className="flex items-center gap-2 text-sm text-zinc-300">
+              <span className="text-xs text-zinc-400">Pause</span>
+              <Switch
+                checked={value.pauseWhilePainting}
+                onCheckedChange={(pauseWhilePainting) => set({ pauseWhilePainting })}
+              />
+            </div>
+          }
+        >
+          <div className="grid grid-cols-3 gap-2">
+            <MiniField label="Size">
+              <SegmentedControl
+                value={value.brushMaxRadius}
+                onChange={(brushMaxRadius) => set({ brushMaxRadius })}
+                options={[
+                  { label: "6px", value: 6 },
+                  { label: "10px", value: 10 },
+                  { label: "16px", value: 16 },
+                ]}
+              />
+            </MiniField>
 
-          <PresetButtonGroup
-            icon={Gauge}
-            label="Growth"
-            value={value.brushGrowthMs}
-            onChange={(brushGrowthMs) => set({ brushGrowthMs })}
-            options={[
-              { label: "Quick", value: 140 },
-              { label: "Balanced", value: 250 },
-              { label: "Slow", value: 420 },
-            ]}
-          />
+            <MiniField label="Growth">
+              <SegmentedControl
+                value={value.brushGrowthMs}
+                onChange={(brushGrowthMs) => set({ brushGrowthMs })}
+                options={[
+                  { label: "140", value: 140 },
+                  { label: "250", value: 250 },
+                  { label: "420", value: 420 },
+                ]}
+              />
+            </MiniField>
 
-          <PresetButtonGroup
-            icon={Wand2}
-            label="Density"
-            value={value.brushDensity}
-            onChange={(brushDensity) => set({ brushDensity })}
-            options={[
-              { label: "Light", value: 0.32 },
-              { label: "Balanced", value: 0.55 },
-              { label: "Heavy", value: 0.8 },
-            ]}
-          />
-        </div>
+            <MiniField label="Density">
+              <SegmentedControl
+                value={value.brushDensity}
+                onChange={(brushDensity) => set({ brushDensity })}
+                options={[
+                  { label: "Low", value: 0.32 },
+                  { label: "Mid", value: 0.55 },
+                  { label: "High", value: 0.8 },
+                ]}
+              />
+            </MiniField>
+          </div>
+        </SectionCard>
 
-        <div className="space-y-3 rounded-2xl border border-white/8 bg-white/3 p-4">
-          <SectionHeader icon={SunMedium} title="Visuals" />
-
-          <div className="grid gap-3">
-            <div className="grid gap-2">
-              <div className="flex items-center justify-between text-sm text-zinc-200">
-                <div className="flex items-center gap-2">
-                  <SunMedium className="h-4 w-4 text-zinc-500" />
-                  <Label className="text-white">Background</Label>
-                </div>
-                <span className="text-xs text-zinc-400">{value.backgroundOpacity}%</span>
-              </div>
+        <SectionCard
+          icon={SunMedium}
+          title="Visuals"
+          trailing={
+            <div className="flex items-center gap-2 text-sm text-zinc-300">
+              <Palette className="h-4 w-4 text-zinc-500" />
+              <span className="text-xs text-zinc-400">Vignette</span>
+              <Switch
+                checked={value.showVignette}
+                onCheckedChange={(showVignette) => set({ showVignette })}
+              />
+            </div>
+          }
+        >
+          <div className="grid gap-2">
+            <SliderField
+              icon={SunMedium}
+              label="Background"
+              valueLabel={`${value.backgroundOpacity}%`}
+            >
               <Slider
                 value={[value.backgroundOpacity]}
-                onValueChange={(arr) => set({ backgroundOpacity: arr?.[0] ?? value.backgroundOpacity })}
+                onValueChange={(arr) =>
+                  set({ backgroundOpacity: arr?.[0] ?? value.backgroundOpacity })
+                }
                 min={0}
                 max={100}
                 step={5}
               />
-            </div>
+            </SliderField>
 
-            <div className="grid gap-2">
-              <div className="flex items-center justify-between text-sm text-zinc-200">
-                <div className="flex items-center gap-2">
-                  <Sparkles className="h-4 w-4 text-zinc-500" />
-                  <Label className="text-white">Glow</Label>
-                </div>
-                <span className="text-xs text-zinc-400">{value.glowStrength}px</span>
-              </div>
+            <SliderField
+              icon={Sparkles}
+              label="Glow"
+              valueLabel={`${value.glowStrength}px`}
+            >
               <Slider
                 value={[value.glowStrength]}
                 onValueChange={(arr) => set({ glowStrength: arr?.[0] ?? value.glowStrength })}
@@ -280,17 +339,9 @@ export function GameOfLifeSettingsPanel({
                 max={30}
                 step={1}
               />
-            </div>
-
-            <div className="flex items-center justify-between rounded-2xl border border-white/8 bg-black/20 px-3 py-2.5">
-              <div className="flex items-center gap-2 text-sm text-zinc-200">
-                <Palette className="h-4 w-4 text-zinc-500" />
-                <span>Vignette</span>
-              </div>
-              <Switch checked={value.showVignette} onCheckedChange={(checked) => set({ showVignette: checked })} />
-            </div>
+            </SliderField>
           </div>
-        </div>
+        </SectionCard>
 
         <Separator className="bg-white/10" />
 
@@ -303,7 +354,11 @@ export function GameOfLifeSettingsPanel({
             <Wand2 className="mr-2 h-4 w-4" />
             Randomize
           </Button>
-          <Button className="flex-1 bg-white text-black hover:bg-white/90" onClick={() => onRestart?.()}>
+
+          <Button
+            className="flex-1 bg-white text-black hover:bg-white/90"
+            onClick={() => onRestart?.()}
+          >
             <RefreshCw className="mr-2 h-4 w-4" />
             Restart
           </Button>
@@ -319,8 +374,4 @@ export function GameOfLifeSettingsPanel({
       </CardContent>
     </Card>
   )
-}
-
-function PauseWhilePaintIcon() {
-  return <div className="h-4 w-4 rounded-sm border border-zinc-600/70 bg-zinc-800/80" aria-hidden="true" />
 }

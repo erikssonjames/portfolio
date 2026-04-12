@@ -3,7 +3,7 @@ import { ArrowUpRight, Github, Linkedin, Mail } from "lucide-react"
 import { GameOfLifeGrid } from "@/components/background/game-of-life/game-of-life-grid"
 import { getPublicEnv } from "@/config/env"
 import { MotionReveal, MotionStagger, revealItemVariants } from "@/components/motion/reveal"
-import { ResumeDownloadButton } from "@/components/resume-download-button"
+import { ResumeDownloadButton, ResumeViewButton } from "@/components/resume-actions"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
@@ -190,20 +190,28 @@ export function Hero() {
                   ))}
                 </MotionStagger>
 
-                <MotionStagger className="mt-7 flex flex-col gap-3 sm:flex-row">
+                <MotionStagger className="mt-7 grid gap-3 sm:grid-cols-2">
+                  <MotionReveal variants={revealItemVariants}>
+                    <ResumeViewButton
+                      className="w-full bg-zinc-100 text-black hover:bg-white"
+                    />
+                  </MotionReveal>
+
                   <MotionReveal variants={revealItemVariants}>
                     <ResumeDownloadButton
-                      variant="secondary"
-                      className="bg-zinc-100 text-black hover:bg-white"
+                      className="w-full border-yellow-400/30 bg-transparent text-yellow-100 hover:bg-yellow-400/10"
                     />
                   </MotionReveal>
 
                   <MotionReveal variants={revealItemVariants}>
                     <Button
+                      asChild
                       variant="outline"
-                      className="border-yellow-400/30 bg-transparent text-yellow-100 hover:bg-yellow-400/10"
+                      className="w-full border-yellow-400/30 bg-transparent text-yellow-100 hover:bg-yellow-400/10 sm:col-span-2"
                     >
-                      See case study
+                      <Link href="/projects/portfolio-v1">
+                        See case study
+                      </Link>
                     </Button>
                   </MotionReveal>
                 </MotionStagger>

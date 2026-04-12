@@ -1,7 +1,7 @@
 import { Code2, Sparkles, Zap } from "lucide-react"
 import { GameOfLifeGrid } from "@/components/background/game-of-life/game-of-life-grid"
 import { MotionReveal, MotionStagger, revealItemVariants } from "@/components/motion/reveal"
-import { ResumeDownloadButton } from "@/components/resume-download-button"
+import { ResumeActionGroup } from "@/components/resume-actions"
 import { Badge } from "@/components/ui/badge"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Separator } from "@/components/ui/separator"
@@ -83,9 +83,10 @@ export function AboutMe() {
           </div>
 
           <MotionReveal delay={0.18}>
-            <ResumeDownloadButton
-              variant="outline"
-              className="border-yellow-400/35 bg-black/30 text-yellow-100 shadow-[0_0_18px_rgba(250,204,21,0.18)] hover:bg-yellow-400/10"
+            <ResumeActionGroup
+              className="flex flex-col gap-3 sm:flex-row"
+              viewClassName="bg-zinc-100 text-black hover:bg-white"
+              downloadClassName="border-yellow-400/35 bg-black/30 text-yellow-100 shadow-[0_0_18px_rgba(250,204,21,0.18)] hover:bg-yellow-400/10"
             />
           </MotionReveal>
         </MotionReveal>

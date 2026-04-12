@@ -2,7 +2,7 @@
 
 import * as React from "react"
 import Link from "next/link"
-import { ArrowUpRight, Github } from "lucide-react"
+import { ArrowUpRight, Github, RotateCw } from "lucide-react"
 import { cn } from "@/lib/utils"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
@@ -142,10 +142,15 @@ export function ProjectCard({
       <CardHeader className="relative z-10">
         <div className="flex items-start justify-between gap-3">
           <div className="min-w-0">
-            <div className="flex items-start justify-between gap-3">
-              <CardTitle className="truncate text-lg">{title}</CardTitle>
-              <ArrowUpRight className="mt-0.5 h-4 w-4 shrink-0 text-zinc-500 transition group-hover:text-yellow-200" />
-            </div>
+            <Link
+              href={`/projects/${slug}`}
+              aria-label={`Open ${title} case study`}
+            >
+              <div className="flex items-start justify-between gap-3">
+                <CardTitle className="truncate text-lg">{title}</CardTitle>
+                <ArrowUpRight className="mt-0.5 h-4 w-4 shrink-0 text-zinc-500 transition group-hover:text-yellow-200" />
+              </div>
+            </Link>
 
             <div className="mt-2 flex flex-wrap items-center gap-2">
               <Badge variant="outline" className={cn("h-5 px-2 text-[11px]", statusBadgeStyle(status))}>
@@ -154,27 +159,27 @@ export function ProjectCard({
 
               <Badge
                 variant="outline"
-                className={cn("h-5 px-2 text-[11px]", healthBadgeStyle(health))}
+                className={cn("flex h-5 items-center gap-1 px-2 text-[11px]", healthBadgeStyle(health))}
                 title={healthCheckUrl ? `Health check: ${healthCheckUrl}` : "No health check configured"}
               >
-                <span className={cn("mr-1 inline-block h-2 w-2 rounded-full", dotClass(health))} />
+                <span className={cn("inline-block h-2 w-2 rounded-full", dotClass(health))} />
                 {healthLabel(health)}
+                {healthCheckUrl ? (
+                  <button
+                    type="button"
+                    aria-label="Recheck health status"
+                    className="ml-0.5 inline-flex h-3.5 w-3.5 items-center justify-center rounded-full text-current/80 transition hover:bg-black/20 hover:text-current"
+                    onClick={(event) => {
+                      event.preventDefault()
+                      event.stopPropagation()
+                      setHealth("CHECKING")
+                      checkHealth(healthCheckUrl).then(setHealth)
+                    }}
+                  >
+                    <RotateCw className={cn("h-3 w-3", health === "CHECKING" && "animate-spin")} />
+                  </button>
+                ) : null}
               </Badge>
-
-              {healthCheckUrl ? (
-                <Button
-                  type="button"
-                  variant="ghost"
-                  size="sm"
-                  className="h-5 px-2 text-[11px] text-zinc-300 hover:bg-yellow-400/10 hover:text-yellow-200"
-                  onClick={() => {
-                    setHealth("CHECKING")
-                    checkHealth(healthCheckUrl).then(setHealth)
-                  }}
-                >
-                  Recheck
-                </Button>
-              ) : null}
 
               <StackIcons stack={stack} className="flex flex-wrap items-center gap-2" />
             </div>

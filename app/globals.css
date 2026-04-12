@@ -124,3 +124,72 @@
     @apply bg-background text-foreground;
   }
 }
+
+.gol-grid-shell {
+  background:
+    radial-gradient(circle at 20% 20%, color-mix(in oklab, var(--gol-alive) 8%, transparent), transparent 35%),
+    radial-gradient(circle at 80% 30%, color-mix(in oklab, var(--gol-alive) 6%, transparent), transparent 30%),
+    var(--gol-dead);
+}
+
+.gol-grid {
+  display: grid;
+  gap: var(--gol-gap);
+  padding: var(--gol-gap);
+}
+
+.gol-canvas {
+  pointer-events: none;
+}
+
+.gol-cell {
+  width: calc(var(--gol-cell-size) - var(--gol-gap));
+  height: calc(var(--gol-cell-size) - var(--gol-gap));
+  min-width: 0;
+  min-height: 0;
+  border-radius: var(--gol-radius);
+  background: transparent;
+  opacity: 0;
+  transform: scale(0.82);
+  transition:
+    opacity 140ms ease,
+    transform 140ms ease,
+    background-color 140ms ease,
+    box-shadow 140ms ease,
+    filter 140ms ease;
+}
+
+.gol-cell.is-alive {
+  background: var(--gol-alive);
+  opacity: 1;
+  transform: scale(1);
+  box-shadow:
+    0 0 calc(var(--gol-glow-size) * 0.45) color-mix(in oklab, var(--gol-alive) 95%, white 5%),
+    0 0 var(--gol-glow-size) var(--gol-glow);
+  filter: saturate(1.15);
+}
+
+.gol-vignette {
+  background: radial-gradient(circle at center, transparent 0 32%, rgba(0, 0, 0, 0.32) 100%);
+}
+
+.gol-brush-outline {
+  border: 1px solid color-mix(in oklab, var(--gol-alive) 75%, white 25%);
+  border-radius: 999px;
+  box-shadow:
+    0 0 calc(var(--gol-glow-size) * 0.35) color-mix(in oklab, var(--gol-alive) 55%, transparent),
+    inset 0 0 0 1px color-mix(in oklab, var(--gol-alive) 28%, transparent);
+  background: color-mix(in oklab, var(--gol-alive) 6%, transparent);
+  opacity: 0;
+  transition: opacity 100ms ease;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .gol-cell {
+    transition: none;
+  }
+
+  .gol-brush-outline {
+    transition: none;
+  }
+}

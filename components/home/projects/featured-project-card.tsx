@@ -3,7 +3,7 @@
 import * as React from "react"
 import Image from "next/image"
 import Link from "next/link"
-import { ArrowUpRight, Github, Globe } from "lucide-react"
+import { ArrowUpRight, Github, Globe, RotateCw } from "lucide-react"
 import { cn } from "@/lib/utils"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
@@ -221,9 +221,24 @@ export function FeaturedProjectCard({
                   <span className="text-xs text-zinc-400">preview</span>
                 </div>
 
-                <Badge variant="outline" className={cn("h-5 px-2 text-[11px]", healthBadgeStyle(health))}>
-                  <span className={cn("mr-1 inline-block h-2 w-2 rounded-full", dotClass(health))} />
+                <Badge variant="outline" className={cn("flex h-5 items-center gap-1 px-2 text-[11px]", healthBadgeStyle(health))}>
+                  <span className={cn("inline-block h-2 w-2 rounded-full", dotClass(health))} />
                   {healthLabel(health)}
+                  {project.healthCheckUrl ? (
+                    <button
+                      type="button"
+                      aria-label="Recheck health status"
+                      className="ml-0.5 inline-flex h-3.5 w-3.5 items-center justify-center rounded-full text-current/80 transition hover:bg-black/20 hover:text-current"
+                      onClick={(event) => {
+                        event.preventDefault()
+                        event.stopPropagation()
+                        setHealth("CHECKING")
+                        checkHealth(project.healthCheckUrl!).then(setHealth)
+                      }}
+                    >
+                      <RotateCw className={cn("h-3 w-3", health === "CHECKING" && "animate-spin")} />
+                    </button>
+                  ) : null}
                 </Badge>
               </div>
 

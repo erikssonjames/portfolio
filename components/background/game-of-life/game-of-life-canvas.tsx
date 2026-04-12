@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { CSSProperties, useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { drawRoundedRect, drawVignette, parseRgb, rgbToStr, stampSparseDisc } from "./lib/canvas";
 import { randomize, step } from "./lib/gol";
 import { useGol } from "./gol-context";
@@ -407,7 +407,7 @@ export function GameOfLifeCanvas() {
       </div>
 
       <canvas ref={canvasRef} className="gol-canvas absolute left-0 top-0 z-0 block" />
-      <div ref={brushOutlineRef} className="gol-brush-outline pointer-events-none absolute left-0 top-0 z-[1]" />
+      <div ref={brushOutlineRef} className="gol-brush-outline pointer-events-none absolute left-0 top-0 z-1" />
     </div>
   );
 }

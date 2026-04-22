@@ -214,16 +214,20 @@ export function ProjectCard({
           )}
         </Button>
 
-        <Button
-          variant="ghost"
-          size="icon"
-          className="text-zinc-300 hover:bg-yellow-400/10 hover:text-yellow-200"
-          asChild
-        >
-          <Link href={repoUrl} target="_blank" aria-label={`${title} repository`} rel="noreferrer">
-            <Github className="h-5 w-5" />
-          </Link>
-        </Button>
+        {repoUrl ? (
+          <Button
+            variant="ghost"
+            size="icon"
+            className="text-zinc-300 hover:bg-yellow-400/10 hover:text-yellow-200"
+            asChild
+          >
+            <Link href={repoUrl} target="_blank" aria-label={`${title} repository`} rel="noreferrer">
+              <Github className="h-5 w-5" />
+            </Link>
+          </Button>
+        ) : (
+          <div className="w-9" aria-hidden="true" />
+        )}
       </CardFooter>
     </Card>
   )

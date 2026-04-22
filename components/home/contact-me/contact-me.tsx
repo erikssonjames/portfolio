@@ -44,13 +44,14 @@ export function ContactMe() {
 
             <MotionReveal delay={0.08}>
               <h2 className="mt-4 text-3xl font-semibold tracking-tight sm:text-4xl">
-                Want to work together?
+                Interested in what I could bring to your team?
               </h2>
             </MotionReveal>
 
             <MotionReveal delay={0.14}>
               <p className="mt-2 max-w-xl text-zinc-300">
-                Send a message and I&apos;ll reply soon. Or reach out directly via email and social.
+                Send a message if you&apos;d like to talk about a role, a team, or the kind of
+                problems I can help solve. You can also reach out directly by email or LinkedIn.
               </p>
             </MotionReveal>
           </div>
@@ -120,7 +121,7 @@ export function ContactMe() {
                   <div className="space-y-2">
                     <p className="font-medium text-zinc-200">What I&apos;m best at</p>
                     <div className="flex flex-wrap gap-2">
-                      {["UI Engineering", "Design Systems", "Performance", "Motion"].map((item) => (
+                      {["Customer Dialogue", "Solution Design", "Full-Stack Delivery", "Technical Ownership"].map((item) => (
                         <MotionReveal key={item} variants={revealItemVariants}>
                           <Badge
                             variant="outline"

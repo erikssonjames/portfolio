@@ -199,17 +199,19 @@ export function FeaturedProjectCard({
                 )}
               </Button>
 
-              <Button
-                size="lg"
-                variant="outline"
-                className="border-yellow-400/35 bg-black/30 text-yellow-100 shadow-[0_0_18px_rgba(250,204,21,0.18)] hover:bg-yellow-400/10"
-                asChild
-              >
-                <a href={project.repoUrl} target="_blank" rel="noreferrer">
-                  View code
-                  <Github className="ml-2 h-4 w-4" />
-                </a>
-              </Button>
+              {project.repoUrl ? (
+                <Button
+                  size="lg"
+                  variant="outline"
+                  className="border-yellow-400/35 bg-black/30 text-yellow-100 shadow-[0_0_18px_rgba(250,204,21,0.18)] hover:bg-yellow-400/10"
+                  asChild
+                >
+                  <a href={project.repoUrl} target="_blank" rel="noreferrer">
+                    View code
+                    <Github className="ml-2 h-4 w-4" />
+                  </a>
+                </Button>
+              ) : null}
             </div>
           </div>
 

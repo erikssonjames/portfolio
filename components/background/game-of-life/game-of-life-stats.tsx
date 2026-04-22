@@ -56,7 +56,7 @@ export function GameOfLifeStats({
   return (
     <Card
       className={cn(
-        "relative overflow-hidden rounded-2xl border-white/10 bg-black/40 shadow-xl backdrop-blur py-0 gap-0",
+        "relative overflow-hidden rounded-2xl border-white/10 bg-black/40 py-0 shadow-xl backdrop-blur gap-0",
         "shadow-[0_0_50px_rgba(250,204,21,0.10)]",
         className,
         expanded && "min-w-72"
@@ -85,7 +85,7 @@ export function GameOfLifeStats({
             </div>
 
             {!expanded && (
-              <div className="mt-0.5 truncate text-[11px] text-zinc-400 pe-2">
+              <div className="mt-0.5 truncate pe-2 text-[11px] text-zinc-400">
                 {formatCompactNumber(localDeaths)} deaths • {formatCompactNumber(localRebirths)} rebirths
               </div>
             )}

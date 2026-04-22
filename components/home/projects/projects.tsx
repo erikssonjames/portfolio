@@ -44,7 +44,8 @@ export function Projects() {
 
             <MotionReveal delay={0.14}>
               <p className="mt-2 max-w-2xl text-zinc-300">
-                A few projects spanning UI engineering, design systems, and product features.
+                A few projects showing how I work from problem framing and stakeholder needs to
+                implementation and delivered outcomes.
               </p>
             </MotionReveal>
           </div>

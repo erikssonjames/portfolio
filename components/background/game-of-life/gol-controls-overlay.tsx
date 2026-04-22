@@ -1,6 +1,7 @@
 "use client";
 
 import { GameOfLifeSettingsPanel } from "./game-of-life-settings";
+import { GameOfLifeInfoButton } from "./game-of-life-info-button";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuPortal, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { Button } from "@/components/ui/button";
 import { ButtonGroup } from "@/components/ui/button-group";
@@ -62,6 +63,8 @@ export function GameOfLifeControlsOverlay() {
             </DropdownMenuPortal>
           </DropdownMenu>
         </ButtonGroup>
+
+        <GameOfLifeInfoButton />
       </ButtonGroup>
     </div>
   );

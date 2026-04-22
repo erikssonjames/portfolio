@@ -14,15 +14,15 @@ const techGroups = [
   },
   {
     icon: LayoutTemplate,
-    title: "Frontend systems",
-    description: "Fast interfaces with strong visual hierarchy, motion, and maintainable components.",
-    items: ["React", "Next.js", "TypeScript", "Tailwind CSS", "shadcn/ui", "Framer Motion"],
+    title: "Solution delivery",
+    description: "Tools I use to turn requirements into maintainable applications and complete working flows.",
+    items: ["React", "Next.js", "TypeScript", "APIs", "Integration", "Implementation"],
   },
   {
     icon: Database,
-    title: "Data & products",
-    description: "Shipping full-stack products with the right level of backend and product tooling.",
-    items: ["Supabase", "Postgres", "Shopify", "Resend", "Product UX", "Case-study thinking"],
+    title: "Data & operations",
+    description: "Systems and services that support reliable delivery, business workflows, and product outcomes.",
+    items: ["Supabase", "Postgres", "Shopify", "Resend", "Reliability", "Business Flows"],
   },
 ]
 
@@ -134,9 +134,9 @@ export function TechIUse() {
                 </p>
               </div>
 
-              <div className="flex items-center gap-2 text-sm text-zinc-400">
+                <div className="flex items-center gap-2 text-sm text-zinc-400">
                 <Braces className="h-4 w-4" />
-                <span>Pragmatic systems, polished surfaces</span>
+                <span>Pragmatic systems, customer-focused outcomes</span>
               </div>
             </CardContent>
           </Card>

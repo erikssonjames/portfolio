@@ -91,7 +91,9 @@ export default async function ProjectPage({ params }: PageProps) {
               <Badge variant="outline" className={statusBadgeStyle(project.status)}>
                 {statusLabel(project.status)}
               </Badge>
-              <StackIcons stack={project.stack} className="flex flex-wrap items-center gap-2" />
+              {project.stack.length > 0 ? (
+                <StackIcons stack={project.stack} className="flex flex-wrap items-center gap-2" />
+              ) : null}
             </div>
 
             <h1 className="mt-6 max-w-4xl text-4xl font-semibold tracking-tight sm:text-5xl">
@@ -113,16 +115,18 @@ export default async function ProjectPage({ params }: PageProps) {
                     </Button>
                   ) : null}
 
-                  <Button
-                    asChild
-                    variant="outline"
-                    className="border-yellow-400/35 bg-black/30 text-yellow-100 hover:bg-yellow-400/10"
-                  >
-                    <a href={project.repoUrl} target="_blank" rel="noreferrer">
-                      View repository
-                      <Github className="ml-2 h-4 w-4" />
-                    </a>
-                  </Button>
+                  {project.repoUrl ? (
+                    <Button
+                      asChild
+                      variant="outline"
+                      className="border-yellow-400/35 bg-black/30 text-yellow-100 hover:bg-yellow-400/10"
+                    >
+                      <a href={project.repoUrl} target="_blank" rel="noreferrer">
+                        View repository
+                        <Github className="ml-2 h-4 w-4" />
+                      </a>
+                    </Button>
+                  ) : null}
                 </div>
               </div>
 
@@ -132,15 +136,21 @@ export default async function ProjectPage({ params }: PageProps) {
 
                 <p className="mt-6 text-xs font-medium uppercase tracking-[0.2em] text-zinc-500">Stack</p>
                 <div className="mt-3 flex flex-wrap gap-2">
-                  {project.stack.map((item) => (
-                    <Badge
-                      key={item}
-                      variant="outline"
-                      className="border-yellow-400/25 bg-zinc-950/40 text-zinc-200"
-                    >
-                      {item}
-                    </Badge>
-                  ))}
+                  {project.stack.length > 0 ? (
+                    project.stack.map((item) => (
+                      <Badge
+                        key={item}
+                        variant="outline"
+                        className="border-yellow-400/25 bg-zinc-950/40 text-zinc-200"
+                      >
+                        {item}
+                      </Badge>
+                    ))
+                  ) : (
+                    <p className="text-sm leading-7 text-zinc-400">
+                      Private product work. Public stack details are intentionally limited.
+                    </p>
+                  )}
                 </div>
               </aside>
             </div>

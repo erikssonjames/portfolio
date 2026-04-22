@@ -25,7 +25,7 @@ export type ProjectType = {
   title: string
   description: string
   stack: StackLabel[]
-  repoUrl: string
+  repoUrl?: string
   liveUrl?: string
   healthCheckUrl?: string
   status: ProjectStatus
@@ -50,7 +50,7 @@ export const allProjects: ProjectType[] = [
     repoUrl: "https://github.com/erikssonjames/gym-quest",
     healthCheckUrl: "https://gym-quest-phi.vercel.app/",
     status: "IN_PRODUCTION",
-    role: "Product planning, UX direction, frontend architecture, and full-stack delivery.",
+    role: "Product planning, solution framing, technical implementation, and end-to-end delivery.",
     featured: true,
     planning: [
       "Frame the product around daily motivation, not just exercise logging, so the core loop feels rewarding before advanced features land.",
@@ -70,7 +70,7 @@ export const allProjects: ProjectType[] = [
       },
       {
         phase: "Build and iteration",
-        focus: "Ship the tracker flow, connect persistence, and refine the reward language across the UI.",
+        focus: "Ship the tracker flow, connect persistence, and refine the experience so the full solution feels coherent in use.",
         output: "A production-facing app that feels cohesive rather than feature-stuffed."
       },
       {
@@ -91,9 +91,9 @@ export const allProjects: ProjectType[] = [
       {
         title: "Build decisions",
         items: [
-          "Next.js provided a fast way to iterate on the app shell, route structure, and frontend interactions in one place.",
-          "Supabase covered the backend foundation cleanly enough to keep most attention on product flow and interface quality.",
-          "shadcn/ui gave a flexible baseline so the product could keep a custom feel without rebuilding every primitive."
+          "Next.js provided a fast way to iterate on the application flow, route structure, and delivery surface in one place.",
+          "Supabase covered the backend foundation cleanly enough to keep attention on the core problem, product flow, and reliability.",
+          "The stack gave enough flexibility to shape the product around user needs without overengineering the foundation."
         ]
       },
       {
@@ -111,6 +111,74 @@ export const allProjects: ProjectType[] = [
     ]
   },
   {
+    slug: "vroff",
+    title: "Vroff - Digital Workspace Platform",
+    headline: "A collaborative work platform where I contributed key product surfaces used to orient work and track progress.",
+    description:
+      "Vroff is a Swedish digital workspace that brings meetings, chat, projects, KPIs, and calendar into one platform. My contribution focused on the metric dashboard, project cards, and the login/flow experience that helped users get into the product and understand their work at a glance.",
+    stack: [],
+    liveUrl: "https://www.vroff.com/",
+    healthCheckUrl: "https://www.vroff.com/",
+    status: "IN_PRODUCTION",
+    role: "Designed and implemented the metric dashboard, project cards, and login/flow pages as part of the product experience.",
+    planning: [
+      "The work needed to support a product positioned as an all-in-one digital office, so the surfaces I worked on had to reinforce clarity, orientation, and day-to-day usefulness.",
+      "The dashboard and project views had to help users understand status quickly, not just look polished, because the product promise is better oversight and easier coordination.",
+      "The login and entry flow needed to lower friction and make the platform feel understandable from the first interaction."
+    ],
+    timeline: [
+      {
+        phase: "Product understanding",
+        focus: "Align the work with Vroff's core promise of combining communication, projects, KPIs, and planning in one workspace.",
+        output: "A clearer direction for which views needed to provide immediate value and orientation."
+      },
+      {
+        phase: "Dashboard work",
+        focus: "Build a metric dashboard that made important signals easier to scan and understand.",
+        output: "A stronger overview surface for tracking progress and surfacing what matters."
+      },
+      {
+        phase: "Project flow",
+        focus: "Create project cards that supported structure, visibility, and easier task coordination.",
+        output: "Project surfaces that fit the product's emphasis on simple project management and team overview."
+      },
+      {
+        phase: "Access and onboarding flow",
+        focus: "Shape the login and flow pages so entering the platform felt straightforward and coherent.",
+        output: "A cleaner entry experience that supported first impressions and easier product access."
+      }
+    ],
+    sections: [
+      {
+        title: "Product context",
+        items: [
+          "According to Vroff's official positioning, the platform combines meetings, chat, projects, KPIs, and calendar in one digital workspace.",
+          "That meant the areas I worked on needed to do more than look good. They had to make work easier to understand and navigate inside a larger product ecosystem."
+        ]
+      },
+      {
+        title: "My contribution",
+        items: [
+          "I created the metric dashboard to give users a clearer view of progress and important signals in the platform.",
+          "I also built the project cards, which supported the product's project management flow and made work items easier to scan and coordinate around.",
+          "On top of that, I worked on the login and flow pages to make the path into the platform feel cleaner and more intuitive."
+        ]
+      },
+      {
+        title: "Why it mattered",
+        items: [
+          "The work sat in important product surfaces where clarity, structure, and usability directly shape how people work day to day.",
+          "It also meant contributing inside an existing platform and making sure the parts I owned supported the product as a whole."
+        ]
+      }
+    ],
+    nextSteps: [
+      "Keep refining the dashboard so key metrics are even easier to scan and act on.",
+      "Develop the project-card flow further to support clearer coordination and follow-up.",
+      "Continue improving the login and entry flow so the first experience of the platform feels simple and dependable."
+    ]
+  },
+  {
     slug: "arts-and-crafts",
     title: "Arts & Crafts - Clay Art Storefront",
     headline: "A minimalist commerce experience built to feel calm, tactile, and trustworthy.",
@@ -121,7 +189,7 @@ export const allProjects: ProjectType[] = [
     repoUrl: "https://github.com/erikssonjames/arts-and-crafts-website",
     healthCheckUrl: "https://arts-and-crafts-website.vercel.app/",
     status: "IN_PRODUCTION",
-    role: "Frontend implementation, storefront UX, and commerce integration.",
+    role: "Solution implementation, commerce flow design, and integration delivery.",
     planning: [
       "Keep the browsing experience lightweight so the products, textures, and photography do most of the talking.",
       "Reduce checkout friction by avoiding custom complexity where Shopify already solves the hard parts well.",
@@ -140,7 +208,7 @@ export const allProjects: ProjectType[] = [
       },
       {
         phase: "Commerce integration",
-        focus: "Connect catalog and checkout paths without overcomplicating the frontend.",
+        focus: "Connect catalog and checkout paths without overcomplicating the overall solution.",
         output: "A straightforward shopping flow backed by Shopify."
       },
       {
@@ -181,7 +249,7 @@ export const allProjects: ProjectType[] = [
   {
     slug: "portfolio-v1",
     title: "Portfolio v1 - Motion-First Personal Site",
-    headline: "A personal site built to feel sharp, expressive, and intentionally engineered.",
+    headline: "A personal site built to communicate solution ownership, clarity, and intentional engineering.",
     description:
       "A neon-accented portfolio with crisp typography, Framer Motion interactions, and obsessive performance tuning for a snappy feel.",
     stack: ["Tailwind CSS", "Next.js", "Framer Motion"],
@@ -199,7 +267,7 @@ export const allProjects: ProjectType[] = [
       {
         phase: "Positioning",
         focus: "Clarify what the site should communicate in the first few seconds.",
-        output: "A tighter narrative around UI engineering, product thinking, and execution."
+        output: "A tighter narrative around customer understanding, solution delivery, and execution."
       },
       {
         phase: "Visual system",
@@ -242,7 +310,7 @@ export const allProjects: ProjectType[] = [
       }
     ],
     nextSteps: [
-      "Replace inferred case-study notes with deeper real project retrospectives.",
+      "Add deeper writeups for more projects as the portfolio continues to grow.",
       "Add richer detail pages for more projects so the site scales beyond a single landing page.",
       "Continue refining performance and content density as the portfolio grows."
     ]

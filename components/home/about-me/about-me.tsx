@@ -15,13 +15,13 @@ export function AboutMe() {
     },
     {
       icon: Code2,
-      title: "Architecture-minded",
-      desc: "KPI-driven decisions, clean patterns, and system design that scales across teams.",
+      title: "Solution-oriented",
+      desc: "Architecture, priorities, and implementation choices tied to the real problem the customer needs solved.",
     },
     {
       icon: Sparkles,
-      title: "Frontend depth",
-      desc: "Years of UI experience with strong typography, component systems, and polished interaction details.",
+      title: "End-to-end ownership",
+      desc: "Comfortable taking work from discovery and planning through implementation, rollout, and iteration.",
     },
   ]
 
@@ -29,11 +29,11 @@ export function AboutMe() {
     "Java",
     "Spring Boot",
     "Architecture & KPIs",
+    "Customer Dialogue",
+    "Solution Design",
     "React",
     "Next.js",
     "TypeScript",
-    "Tailwind",
-    "shadcn/ui",
   ]
 
   return (
@@ -60,7 +60,7 @@ export function AboutMe() {
                   variant="secondary"
                   className="bg-zinc-900/70 text-zinc-200 ring-1 ring-yellow-400/15"
                 >
-                  Backend - Frontend - Architecture
+                  Customer understanding - Delivery - Architecture
                 </Badge>
               </MotionReveal>
             </MotionStagger>
@@ -76,8 +76,9 @@ export function AboutMe() {
                 I&apos;m a consultant at Netcompany, working mainly with{" "}
                 <span className="text-yellow-200">Java Spring Boot</span> and{" "}
                 <span className="text-yellow-200">KPI and architectural design</span>. I also
-                have an extensive frontend background, so I&apos;m comfortable owning work end-to-end,
-                from system decisions to the UI polish that users actually feel.
+                bring broad delivery experience, so I&apos;m comfortable owning work end to end,
+                from understanding stakeholder needs and shaping the solution to implementing and
+                refining what gets shipped.
               </p>
             </MotionReveal>
           </div>
@@ -111,16 +112,17 @@ export function AboutMe() {
 
                 <MotionReveal variants={revealItemVariants}>
                   <p className="leading-relaxed">
-                    Alongside that, I bring strong frontend experience, designing and implementing
-                    component systems, building clean interfaces, and refining the interaction details
-                    that make products feel fast and intentional.
+                    My approach starts with the customer problem and the context around it. That
+                    means asking the right questions early, aligning the solution with real needs,
+                    and avoiding unnecessary complexity before it enters the system.
                   </p>
                 </MotionReveal>
 
                 <MotionReveal variants={revealItemVariants}>
                   <p className="leading-relaxed">
                     I enjoy collaborating across product, design, and engineering, translating goals
-                    into a scalable system and a UI that&apos;s easy to use and easy to maintain.
+                    into a scalable solution that is understandable, maintainable, and useful in
+                    practice.
                   </p>
                 </MotionReveal>
 
@@ -152,9 +154,9 @@ export function AboutMe() {
                   <div className="rounded-xl border border-yellow-400/15 bg-black/30 p-4 shadow-[inset_0_0_18px_rgba(250,204,21,0.08)]">
                     <p className="text-sm font-medium text-zinc-200">What I&apos;m looking for</p>
                     <p className="mt-1 text-sm text-zinc-300">
-                      Projects where I can shape architecture, ship real features, and leverage my
-                      frontend background to deliver a polished user experience without sacrificing
-                      code quality and long-term maintainability.
+                      Projects where I can work closely with customers or stakeholders, shape the
+                      right technical approach, and carry the work through to a solution that
+                      creates real value.
                     </p>
                   </div>
                 </MotionReveal>

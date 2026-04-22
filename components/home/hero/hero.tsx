@@ -29,7 +29,7 @@ export function Hero() {
                       variant="outline"
                       className="border-yellow-400/50 bg-yellow-400/10 text-yellow-200 shadow-[0_0_18px_rgba(250,204,21,0.25)]"
                     >
-                      Available for work
+                      Open to new opportunities
                     </Badge>
                   </MotionReveal>
 
@@ -38,23 +38,23 @@ export function Hero() {
                       variant="secondary"
                       className="bg-zinc-900/70 text-zinc-200 ring-1 ring-yellow-400/15"
                     >
-                      Neon - Shadow - Yellow
+                      Customer-first - End-to-end - Outcome-driven
                     </Badge>
                   </MotionReveal>
                 </MotionStagger>
 
                 <MotionReveal delay={0.08}>
                   <h1 className="mt-6 text-4xl font-semibold tracking-tight sm:text-5xl lg:text-6xl">
-                    I build{" "}
+                    I deliver{" "}
                     <span className="relative">
                       <span className="bg-linear-to-b from-yellow-200 via-yellow-300 to-yellow-500 bg-clip-text text-transparent">
-                        fast
+                        practical
                       </span>
                       <span className="absolute -inset-x-2 -inset-y-1 -z-10 rounded-lg bg-yellow-400/10 blur-md" />
                     </span>{" "}
-                    products with{" "}
+                    solutions with{" "}
                     <span className="bg-linear-to-r from-yellow-200 via-yellow-300 to-yellow-500 bg-clip-text text-transparent">
-                      bold UI
+                      customer focus
                     </span>
                     .
                   </h1>
@@ -62,8 +62,9 @@ export function Hero() {
 
                 <MotionReveal delay={0.14}>
                   <p className="mt-5 max-w-xl text-base leading-relaxed text-zinc-300 sm:text-lg">
-                    Fullstack builder with a love for crisp interactions, clean systems, and the
-                    kind of glow that makes interfaces feel alive.
+                    Fullstack consultant focused on understanding customer needs, shaping the right
+                    solution, and delivering reliable systems from architecture and backend to the
+                    final product experience.
                   </p>
                 </MotionReveal>
 
@@ -87,7 +88,7 @@ export function Hero() {
                       scrollToId="contact"
                       className="border-yellow-400/40 bg-black/30 text-yellow-100 shadow-[0_0_18px_rgba(250,204,21,0.20)] hover:bg-yellow-400/10"
                     >
-                      Contact me
+                      Get in touch
                       <Mail className="ml-2 h-4 w-4" />
                     </Button>
                   </MotionReveal>
@@ -127,7 +128,7 @@ export function Hero() {
                   </MotionReveal>
 
                   <div className="mt-4 flex flex-wrap gap-2">
-                    {["React", "Next.js", "TypeScript", "Design Systems", "Motion"].map((item) => (
+                    {["Customer Needs", "Architecture", "Backend", "Delivery", "Product Thinking"].map((item) => (
                       <MotionReveal key={item} variants={revealItemVariants}>
                         <Badge
                           variant="outline"
@@ -155,10 +156,10 @@ export function Hero() {
                   <div className="flex items-start justify-between gap-4">
                     <div>
                       <p className="text-xs uppercase tracking-widest text-yellow-200/80">
-                        Why teams hire me
+                        Why I could be a strong hire
                       </p>
                       <h2 className="mt-2 text-xl font-semibold text-zinc-100">
-                        Product-minded engineering with strong UI instincts
+                        Solution ownership from problem to delivery
                       </h2>
                     </div>
                     <Badge className="bg-yellow-400 text-black">Now</Badge>
@@ -167,9 +168,9 @@ export function Hero() {
 
                 <MotionReveal delay={0.12}>
                   <p className="mt-4 text-sm leading-relaxed text-zinc-300">
-                    I like building interfaces that feel sharp on first glance and solid under the
-                    hood. The sweet spot is shipping fast without making the codebase harder to
-                    live with later.
+                    I work best where technical decisions need to stay grounded in real customer
+                    needs. The goal is to ship the full solution clearly and responsibly, not just
+                    one polished layer of it.
                   </p>
                 </MotionReveal>
 
@@ -195,9 +196,9 @@ export function Hero() {
                   <MotionReveal variants={revealItemVariants}>
                     <div className="grid gap-3 rounded-2xl border border-yellow-400/15 bg-black/25 p-4 sm:grid-cols-3">
                       {[
-                        { label: "Focus", value: "React + Next.js" },
-                        { label: "Style", value: "Bold, clean UI" },
-                        { label: "Mode", value: "Shipping fast" },
+                        { label: "Focus", value: "Customer value" },
+                        { label: "Strength", value: "Full-solution delivery" },
+                        { label: "Mode", value: "Pragmatic execution" },
                       ].map((item) => (
                         <div key={item.label}>
                           <p className="text-[11px] uppercase tracking-[0.18em] text-zinc-500">{item.label}</p>
@@ -212,7 +213,8 @@ export function Hero() {
                       <div>
                         <p className="text-[11px] uppercase tracking-[0.18em] text-zinc-500">Current focus</p>
                         <p className="mt-1 text-sm text-zinc-200">
-                          Design-led products, portfolio work, and strong user-facing details.
+                          Helping teams define the right solution, align technical choices with
+                          customer outcomes, and deliver work end to end.
                         </p>
                       </div>
                       <span className="h-2.5 w-2.5 rounded-full bg-yellow-300 shadow-[0_0_18px_rgba(250,204,21,0.7)]" />

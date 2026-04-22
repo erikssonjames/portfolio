@@ -16,18 +16,18 @@ const experienceItems = [
   },
   {
     icon: Layers3,
-    label: "Frontend depth",
-    title: "Extensive UI engineering background",
+    label: "Solution delivery",
+    title: "Customer needs into technical execution",
     copy:
-      "Designing and building polished interfaces, component systems, and interaction patterns that hold up in real products.",
-    tags: ["React", "Next.js", "Design Systems", "Interaction Design"],
+      "Translating stakeholder goals into clear technical plans, then delivering working solutions that balance speed, quality, and long-term maintainability.",
+    tags: ["Discovery", "Planning", "Delivery", "Maintainability"],
   },
   {
     icon: Workflow,
     label: "How I work",
     title: "End-to-end product ownership",
     copy:
-      "Comfortable moving from system decisions to implementation details, making sure architecture and user experience support each other.",
+      "Comfortable moving from system decisions to implementation details, making sure architecture, delivery, and real usage all support each other.",
     tags: ["Full-stack", "Product Thinking", "Delivery", "Maintainability"],
   },
 ]
@@ -56,7 +56,7 @@ export function Experience() {
                   variant="secondary"
                   className="bg-zinc-900/70 text-zinc-200 ring-1 ring-yellow-400/15"
                 >
-                  Backend + frontend delivery
+                  Customer-focused solution delivery
                 </Badge>
               </MotionReveal>
             </MotionStagger>
@@ -69,8 +69,8 @@ export function Experience() {
 
             <MotionReveal delay={0.14}>
               <p className="mt-2 max-w-2xl text-zinc-300">
-                I work comfortably across architecture, backend implementation, and frontend
-                execution, with a bias toward shipping clear, maintainable solutions.
+                I work across customer dialogue, architecture, implementation, and follow-through,
+                with a bias toward shipping solutions that are clear, useful, and maintainable.
               </p>
             </MotionReveal>
           </div>
@@ -132,8 +132,8 @@ export function Experience() {
                   <span className="text-sm font-medium">What that means in practice</span>
                 </div>
                 <p className="mt-3 text-sm leading-7 text-zinc-300">
-                  I can contribute at the system level, implement the product itself, and still care
-                  about the UX details that make the end result feel intentional.
+                  I can help define the problem, shape the solution, implement the system, and make
+                  sure what gets delivered actually works for the people using it.
                 </p>
               </div>
 

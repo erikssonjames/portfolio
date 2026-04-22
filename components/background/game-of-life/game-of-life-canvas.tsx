@@ -17,6 +17,8 @@ const BRUSH_ACTIVE_MS = 120;
 const BRUSH_OVERLAY_IDLE_MS = 220;
 const MAX_DPR = 1.5;
 
+type IntroStage = "dead" | "loading" | "revealed";
+
 function getBrushRadiusCells(settings: GolSettings, startedAt: number, now: number) {
   const targetRadius = Math.max(1, Math.round(settings.brushMaxRadius / 4));
   const growthMs = Math.max(1, settings.brushGrowthMs);
@@ -25,13 +27,14 @@ function getBrushRadiusCells(settings: GolSettings, startedAt: number, now: numb
   return Math.max(1, Math.round(1 + (targetRadius - 1) * progress));
 }
 
-export function GameOfLifeCanvas() {
+export function GameOfLifeCanvas({ introStage = "revealed" }: { introStage?: IntroStage }) {
   const { isPlaying, restartToken, randomizeToken, settings, updateLocalDeaths, updateLocalRebirths } = useGol();
 
   const [baseColors, setBaseColors] = useState({
     aliveCss: "rgb(253,224,71)",
     deadCss: "rgb(0,0,0)",
   });
+  const introStageRef = useRef<IntroStage>(introStage);
   const settingsRef = useRef(settings);
   const isPlayingRef = useRef(isPlaying);
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
@@ -54,6 +57,10 @@ export function GameOfLifeCanvas() {
   useEffect(() => {
     settingsRef.current = settings;
   }, [settings]);
+
+  useEffect(() => {
+    introStageRef.current = introStage;
+  }, [introStage]);
 
   useEffect(() => {
     isPlayingRef.current = isPlaying;
@@ -170,7 +177,9 @@ export function GameOfLifeCanvas() {
     boardRef.current = new Uint8Array(cols * rows);
     nextBoardRef.current = new Uint8Array(cols * rows);
     protectionRef.current = new Uint8Array(cols * rows);
-    randomize(boardRef.current, s.randomFill);
+    if (introStageRef.current === "revealed") {
+      randomize(boardRef.current, s.randomFill);
+    }
     lastHoverCellRef.current = null;
     renderBoard();
   }, [renderBoard]);
@@ -210,7 +219,7 @@ export function GameOfLifeCanvas() {
       const currentBoard = boardRef.current;
       const s = settingsRef.current;
 
-      if (!currentBoard.length || !cols || !rows || s.disableBrush) return;
+      if (!currentBoard.length || !cols || !rows || s.disableBrush || introStageRef.current !== "revealed") return;
 
       const cx = Math.floor(px / s.cellSize);
       const cy = Math.floor(py / s.cellSize);
@@ -350,6 +359,72 @@ export function GameOfLifeCanvas() {
   }, [randomizeBoard, randomizeToken]);
 
   useEffect(() => {
+    const { cols, rows } = dimsRef.current;
+    if (!cols || !rows || !boardRef.current.length) return;
+
+    if (introStage === "dead") {
+      boardRef.current = new Uint8Array(cols * rows);
+      nextBoardRef.current = new Uint8Array(cols * rows);
+      protectionRef.current = new Uint8Array(cols * rows);
+      renderBoard();
+      return;
+    }
+
+    if (introStage === "loading") {
+      const board = new Uint8Array(cols * rows);
+      const centerX = Math.floor(cols / 2);
+      const centerY = Math.floor(rows / 2);
+      const pulses = [
+        { dx: 0, dy: 0, radius: 3, density: 0.82, delay: 0 },
+        { dx: -Math.max(4, Math.floor(cols * 0.08)), dy: -2, radius: 4, density: 0.64, delay: 180 },
+        { dx: Math.max(4, Math.floor(cols * 0.08)), dy: 2, radius: 5, density: 0.56, delay: 360 },
+        { dx: 0, dy: Math.max(3, Math.floor(rows * 0.05)), radius: 6, density: 0.44, delay: 540 },
+        { dx: 0, dy: 0, radius: Math.max(6, Math.floor(Math.min(cols, rows) * 0.12)), density: 0.18, delay: 760 },
+      ];
+
+      boardRef.current = board;
+      nextBoardRef.current = new Uint8Array(cols * rows);
+      protectionRef.current = new Uint8Array(cols * rows);
+      renderBoard();
+
+      const timers = pulses.map((pulse, index) =>
+        window.setTimeout(() => {
+          stampSparseDisc({
+            board,
+            cols,
+            rows,
+            cx: centerX + pulse.dx,
+            cy: centerY + pulse.dy,
+            radius: pulse.radius,
+            density: pulse.density,
+            seed: 0x9e3779b9 ^ (index * 2654435761),
+            ringBias: index === pulses.length - 1 ? 0.85 : 0.35,
+          });
+          renderBoard();
+        }, pulse.delay)
+      );
+
+      return () => {
+        for (const timer of timers) {
+          window.clearTimeout(timer);
+        }
+      };
+    }
+
+    if (introStage === "revealed") {
+      const liveCells = boardRef.current.reduce((count, value) => count + value, 0);
+      if (liveCells === 0) {
+        const next = new Uint8Array(cols * rows);
+        randomize(next, settingsRef.current.randomFill);
+        boardRef.current = next;
+        nextBoardRef.current = new Uint8Array(next.length);
+        protectionRef.current = new Uint8Array(next.length);
+      }
+      renderBoard();
+    }
+  }, [introStage, renderBoard]);
+
+  useEffect(() => {
     const container = containerRef.current;
     if (!container) return;
 
@@ -359,6 +434,8 @@ export function GameOfLifeCanvas() {
     };
 
     const showBrushOverlay = () => {
+      if (introStageRef.current !== "revealed") return;
+
       brushVisibleRef.current = true;
       updateBrushOutline();
 
@@ -373,6 +450,13 @@ export function GameOfLifeCanvas() {
     };
 
     const onMove = (e: PointerEvent) => {
+      if (introStageRef.current !== "revealed") {
+        brushVisibleRef.current = false;
+        brushStartedAtRef.current = 0;
+        updateBrushOutline();
+        return;
+      }
+
       const { x, y, rect } = toBoardXY(e.clientX, e.clientY);
       if (x < 0 || y < 0 || x > rect.width || y > rect.height) {
         brushVisibleRef.current = false;

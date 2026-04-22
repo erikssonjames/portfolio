@@ -9,6 +9,6 @@ datasource db {
 
 model GameOfLifeStats {
   id Int @id
-  deaths Int
-  rebirths Int
+  deaths BigInt
+  rebirths BigInt
 }

@@ -1,9 +1,10 @@
+import { parseStatisticValue } from "@/lib/large-number";
 import { useEffect, useState } from "react";
 
 interface Statistics {
   id: 1;
-  deaths: number;
-  rebirths: number;
+  deaths: bigint;
+  rebirths: bigint;
 }
 
 export function useGameOfLifeStats() {
@@ -32,8 +33,14 @@ export function useGameOfLifeStats() {
           return;
         }
 
-        const data = (await res.json()) as Statistics;
-        if (mounted) setStatistics(data);
+        const data = (await res.json()) as { id: 1; deaths: string; rebirths: string };
+        if (mounted) {
+          setStatistics({
+            id: data.id,
+            deaths: parseStatisticValue(data.deaths),
+            rebirths: parseStatisticValue(data.rebirths),
+          });
+        }
       } catch (e) {
         if (e instanceof DOMException && e.name === "AbortError") return;
         console.error(e);

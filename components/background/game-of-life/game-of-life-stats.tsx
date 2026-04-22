@@ -1,13 +1,11 @@
 "use client"
 
 import * as React from "react"
-import { Spinner } from "@/components/ui/spinner"
-import { Badge } from "@/components/ui/badge"
 import { Card } from "@/components/ui/card"
 import { Separator } from "@/components/ui/separator"
-import { Button } from "@/components/ui/button"
+import { formatCompactNumber } from "@/lib/large-number"
 import { cn } from "@/lib/utils"
-import { Activity, Skull, Sparkles, ChevronDown, ChevronUp } from "lucide-react"
+import { Activity, Skull, Sparkles } from "lucide-react"
 import { useGameOfLifeStats } from "./use-game-of-life-stats"
 import { useGol } from "./gol-context"
 
@@ -18,7 +16,7 @@ function StatRow({
 }: {
   icon: React.ElementType
   label: string
-  value: number
+  value: bigint | number
 }) {
   return (
     <div className="flex items-center justify-between gap-3 rounded-xl border border-yellow-400/15 bg-black/30 px-3 py-2 shadow-[inset_0_0_18px_rgba(250,204,21,0.06)]">
@@ -29,7 +27,7 @@ function StatRow({
         <span className="text-xs text-zinc-300">{label}</span>
       </div>
       <span className="text-sm font-semibold tabular-nums text-zinc-100">
-        {value.toLocaleString()}
+        {formatCompactNumber(value)}
       </span>
     </div>
   )
@@ -44,11 +42,13 @@ export function GameOfLifeStats({
 }) {
   const { localDeaths, localRebirths } = useGol()
   const { statistics } = useGameOfLifeStats()
-  const { deaths: globalDeaths, rebirths: globalRebirths } = statistics ?? { deaths: 0, rebirths: 0 }
+  const { deaths: globalDeaths, rebirths: globalRebirths } = statistics ?? {
+    deaths: BigInt(0),
+    rebirths: BigInt(0),
+  }
   const [expanded, setExpanded] = React.useState(defaultExpanded)
 
   const totalLocalEvents = localDeaths + localRebirths
-
   const totalGlobalEvents = globalDeaths + globalRebirths
 
   const toggleExpanded = () => setExpanded((v) => !v)
@@ -62,11 +62,9 @@ export function GameOfLifeStats({
         expanded && "min-w-72"
       )}
     >
-      {/* tiny neon glow */}
       <div className="pointer-events-none absolute -left-20 -top-20 h-44 w-44 rounded-full bg-yellow-400/10 blur-[60px]" />
       <div className="pointer-events-none absolute -bottom-24 right-6 h-56 w-56 rounded-full bg-yellow-300/8 blur-[75px]" />
 
-      {/* Click-to-expand header (always small) */}
       <button
         type="button"
         onClick={toggleExpanded}
@@ -86,17 +84,15 @@ export function GameOfLifeStats({
               <span className="truncate text-xs font-medium text-zinc-100">Lifecycle</span>
             </div>
 
-            {/* secondary line only when collapsed */}
             {!expanded && (
               <div className="mt-0.5 truncate text-[11px] text-zinc-400 pe-2">
-                {localDeaths.toLocaleString()} deaths • {localRebirths.toLocaleString()} rebirths
+                {formatCompactNumber(localDeaths)} deaths • {formatCompactNumber(localRebirths)} rebirths
               </div>
             )}
           </div>
         </div>
       </button>
 
-      {/* Expanded content */}
       <div
         className={cn(
           "grid transition-[grid-template-rows,opacity] duration-200 ease-out",

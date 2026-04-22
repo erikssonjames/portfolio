@@ -125,6 +125,17 @@
   }
 }
 
+body,
+a,
+button,
+input,
+textarea,
+select,
+summary,
+[role="button"] {
+  cursor: none !important;
+}
+
 .gol-grid-shell {
   background:
     radial-gradient(circle at 20% 20%, color-mix(in oklab, var(--gol-alive) 8%, transparent), transparent 35%),
@@ -184,12 +195,32 @@
   transition: opacity 100ms ease;
 }
 
+.gol-cursor-dot {
+  width: 10px;
+  height: 10px;
+  margin-left: -5px;
+  margin-top: -5px;
+  border-radius: 999px;
+  background: rgb(250 204 21);
+  box-shadow:
+    0 0 0 1px rgba(0, 0, 0, 0.45),
+    0 0 16px rgba(250, 204, 21, 0.55),
+    0 0 28px rgba(250, 204, 21, 0.25);
+  opacity: 0;
+  transform: translate(-100px, -100px);
+  transition: opacity 100ms ease;
+}
+
 @media (prefers-reduced-motion: reduce) {
   .gol-cell {
     transition: none;
   }
 
   .gol-brush-outline {
+    transition: none;
+  }
+
+  .gol-cursor-dot {
     transition: none;
   }
 }

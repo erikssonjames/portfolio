@@ -14,6 +14,7 @@ type GridDims = {
 const CELL_GAP = 1;
 const BRUSH_PROTECTION_TICKS = 3;
 const BRUSH_ACTIVE_MS = 120;
+const BRUSH_OVERLAY_IDLE_MS = 220;
 const MAX_DPR = 1.5;
 
 function getBrushRadiusCells(settings: GolSettings, startedAt: number, now: number) {
@@ -48,6 +49,8 @@ export function GameOfLifeCanvas() {
   const brushPointRef = useRef({ x: 0, y: 0 });
   const brushStartedAtRef = useRef(0);
   const brushActiveUntilRef = useRef(0);
+  const brushOverlayTimeoutRef = useRef<number | null>(null);
+
   useEffect(() => {
     settingsRef.current = settings;
   }, [settings]);
@@ -355,6 +358,20 @@ export function GameOfLifeCanvas() {
       return { x: clientX - rect.left, y: clientY - rect.top, rect };
     };
 
+    const showBrushOverlay = () => {
+      brushVisibleRef.current = true;
+      updateBrushOutline();
+
+      if (brushOverlayTimeoutRef.current) {
+        window.clearTimeout(brushOverlayTimeoutRef.current);
+      }
+
+      brushOverlayTimeoutRef.current = window.setTimeout(() => {
+        brushVisibleRef.current = false;
+        updateBrushOutline();
+      }, BRUSH_OVERLAY_IDLE_MS);
+    };
+
     const onMove = (e: PointerEvent) => {
       const { x, y, rect } = toBoardXY(e.clientX, e.clientY);
       if (x < 0 || y < 0 || x > rect.width || y > rect.height) {
@@ -364,20 +381,27 @@ export function GameOfLifeCanvas() {
         return;
       }
 
-      if (!brushVisibleRef.current) {
+      if (!brushStartedAtRef.current) {
         brushStartedAtRef.current = performance.now();
       }
 
-      brushVisibleRef.current = true;
       brushPointRef.current = { x, y };
-      updateBrushOutline();
+      showBrushOverlay();
       handlePointerMoveXY(x, y);
     };
 
-    const onLeave = () => {
+    const hideBrush = () => {
       brushVisibleRef.current = false;
       brushStartedAtRef.current = 0;
+      if (brushOverlayTimeoutRef.current) {
+        window.clearTimeout(brushOverlayTimeoutRef.current);
+        brushOverlayTimeoutRef.current = null;
+      }
       updateBrushOutline();
+    };
+
+    const onLeave = () => {
+      hideBrush();
     };
 
     window.addEventListener("pointermove", onMove, { capture: true });
@@ -386,6 +410,9 @@ export function GameOfLifeCanvas() {
     return () => {
       window.removeEventListener("pointermove", onMove, { capture: true });
       window.removeEventListener("pointerleave", onLeave);
+      if (brushOverlayTimeoutRef.current) {
+        window.clearTimeout(brushOverlayTimeoutRef.current);
+      }
     };
   }, [handlePointerMoveXY, updateBrushOutline]);
 

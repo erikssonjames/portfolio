@@ -152,31 +152,32 @@ export function Hero() {
 
               <CardContent className="relative p-6 sm:p-8">
                 <MotionReveal delay={0.05}>
-                  <div className="flex items-center justify-between">
+                  <div className="flex items-start justify-between gap-4">
                     <div>
                       <p className="text-xs uppercase tracking-widest text-yellow-200/80">
-                        Now shipping
+                        Why teams hire me
                       </p>
                       <h2 className="mt-2 text-xl font-semibold text-zinc-100">
-                        Neon-ready portfolio
+                        Product-minded engineering with strong UI instincts
                       </h2>
                     </div>
-                    <Badge className="bg-yellow-400 text-black">v1</Badge>
+                    <Badge className="bg-yellow-400 text-black">Now</Badge>
                   </div>
                 </MotionReveal>
 
                 <MotionReveal delay={0.12}>
                   <p className="mt-4 text-sm leading-relaxed text-zinc-300">
-                    A clean layout with luminous accents, deep shadows, and high contrast, built
-                    with shadcn/ui components for a polished baseline.
+                    I like building interfaces that feel sharp on first glance and solid under the
+                    hood. The sweet spot is shipping fast without making the codebase harder to
+                    live with later.
                   </p>
                 </MotionReveal>
 
-                <MotionStagger className="mt-6 grid gap-3">
+                {/* <MotionStagger className="mt-6 grid gap-3">
                   {[
-                    { title: "Glow-first visuals", desc: "Soft gradients and subtle scanlines." },
-                    { title: "Sharp CTAs", desc: "High-contrast buttons that pop." },
-                    { title: "Easy to extend", desc: "Swap copy, links, and badges quickly." },
+                    { title: "Frontend that feels intentional", desc: "Clear hierarchy, motion with restraint, and details that make products feel cared for." },
+                    { title: "Fullstack delivery", desc: "From polished UI to APIs, data, and the system choices needed to ship confidently." },
+                    { title: "Fast iteration without chaos", desc: "I optimize for momentum, but I still want the next version to be easier, not messier." },
                   ].map((feature) => (
                     <MotionReveal key={feature.title} variants={revealItemVariants}>
                       <div className="rounded-xl border border-yellow-400/15 bg-black/30 p-4 shadow-[inset_0_0_18px_rgba(250,204,21,0.08)]">
@@ -188,32 +189,49 @@ export function Hero() {
                       </div>
                     </MotionReveal>
                   ))}
-                </MotionStagger>
+                </MotionStagger> */}
 
-                <MotionStagger className="mt-7 grid gap-3 sm:grid-cols-2">
+                <MotionStagger className="mt-7 grid gap-3">
                   <MotionReveal variants={revealItemVariants}>
-                    <ResumeViewButton
-                      className="w-full bg-zinc-100 text-black hover:bg-white"
-                    />
+                    <div className="grid gap-3 rounded-2xl border border-yellow-400/15 bg-black/25 p-4 sm:grid-cols-3">
+                      {[
+                        { label: "Focus", value: "React + Next.js" },
+                        { label: "Style", value: "Bold, clean UI" },
+                        { label: "Mode", value: "Shipping fast" },
+                      ].map((item) => (
+                        <div key={item.label}>
+                          <p className="text-[11px] uppercase tracking-[0.18em] text-zinc-500">{item.label}</p>
+                          <p className="mt-1 text-sm font-medium text-zinc-100">{item.value}</p>
+                        </div>
+                      ))}
+                    </div>
                   </MotionReveal>
 
                   <MotionReveal variants={revealItemVariants}>
-                    <ResumeDownloadButton
-                      className="w-full border-yellow-400/30 bg-transparent text-yellow-100 hover:bg-yellow-400/10"
-                    />
+                    <div className="flex items-center justify-between rounded-2xl border border-yellow-400/15 bg-black/25 px-4 py-3">
+                      <div>
+                        <p className="text-[11px] uppercase tracking-[0.18em] text-zinc-500">Current focus</p>
+                        <p className="mt-1 text-sm text-zinc-200">
+                          Design-led products, portfolio work, and strong user-facing details.
+                        </p>
+                      </div>
+                      <span className="h-2.5 w-2.5 rounded-full bg-yellow-300 shadow-[0_0_18px_rgba(250,204,21,0.7)]" />
+                    </div>
                   </MotionReveal>
 
-                  <MotionReveal variants={revealItemVariants}>
-                    <Button
-                      asChild
-                      variant="outline"
-                      className="w-full border-yellow-400/30 bg-transparent text-yellow-100 hover:bg-yellow-400/10 sm:col-span-2"
-                    >
-                      <Link href="/projects/portfolio-v1">
-                        See case study
-                      </Link>
-                    </Button>
-                  </MotionReveal>
+                  <div className="grid gap-3 sm:grid-cols-2">
+                    <MotionReveal variants={revealItemVariants}>
+                      <ResumeViewButton
+                        className="w-full bg-zinc-100 text-black hover:bg-white"
+                      />
+                    </MotionReveal>
+
+                    <MotionReveal variants={revealItemVariants}>
+                      <ResumeDownloadButton
+                        className="w-full border-yellow-400/30 bg-transparent text-yellow-100 hover:bg-yellow-400/10"
+                      />
+                    </MotionReveal>
+                  </div>
                 </MotionStagger>
               </CardContent>
             </Card>

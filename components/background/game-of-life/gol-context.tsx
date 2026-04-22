@@ -1,6 +1,7 @@
 "use client";
 
 import React, { createContext, useCallback, useContext, useEffect, useMemo, useRef, useState } from "react";
+import { parseStatisticValue } from "@/lib/large-number";
 import { DEFAULT_GOL_SETTINGS } from "./game-of-life-settings";
 
 type GolSettings = typeof DEFAULT_GOL_SETTINGS;
@@ -15,8 +16,8 @@ type GolApi = {
   requestRestart: () => void;
   requestRandomize: () => void;
   toggleBrush: () => void,
-  localDeaths: number,
-  localRebirths: number,
+  localDeaths: bigint,
+  localRebirths: bigint,
   updateLocalDeaths: (deaths: number) => void,
   updateLocalRebirths: (rebirths: number) => void
 };
@@ -24,25 +25,29 @@ type GolApi = {
 const GolContext = createContext<GolApi | null>(null);
 
 export function GolProvider({ children }: { children: React.ReactNode }) {
-  const [localDeaths, setLocalDeaths] = useState(0);
-  const [localRebirths, setLocalRebirths] = useState(0);
+  const [localDeaths, setLocalDeaths] = useState(BigInt(0));
+  const [localRebirths, setLocalRebirths] = useState(BigInt(0));
 
-  const localDeathsRef = useRef(0);
-  const localRebirthsRef = useRef(0);
+  const localDeathsRef = useRef(BigInt(0));
+  const localRebirthsRef = useRef(BigInt(0));
 
   useEffect(() => { localDeathsRef.current = localDeaths; }, [localDeaths]);
   useEffect(() => { localRebirthsRef.current = localRebirths; }, [localRebirths]);
 
-  const sentLocalDeaths = useRef(0);     // totals already sent
-  const sentLocalRebirths = useRef(0);   // totals already sent
+  const sentLocalDeaths = useRef(BigInt(0));     // totals already sent
+  const sentLocalRebirths = useRef(BigInt(0));   // totals already sent
 
   const [settings, setSettings] = useState(DEFAULT_GOL_SETTINGS);
   const [isPlaying, setIsPlaying] = useState(true);
   const [restartToken, setRestartToken] = useState(0);
   const [randomizeToken, setRandomizeToken] = useState(0);
 
-  const updateLocalDeaths = useCallback((deaths: number) => setLocalDeaths(prev => prev + deaths), [])
-  const updateLocalRebirths = useCallback((rebirths: number) => setLocalRebirths(prev => prev + rebirths), [])
+  const updateLocalDeaths = useCallback((deaths: number) => {
+    setLocalDeaths(prev => prev + parseStatisticValue(deaths));
+  }, [])
+  const updateLocalRebirths = useCallback((rebirths: number) => {
+    setLocalRebirths(prev => prev + parseStatisticValue(rebirths));
+  }, [])
 
   useEffect(() => {
     async function uploadLocalData() {
@@ -52,12 +57,12 @@ export function GolProvider({ children }: { children: React.ReactNode }) {
       const deathsDelta = deathsTotal - sentLocalDeaths.current;
       const rebirthsDelta = rebirthsTotal - sentLocalRebirths.current;
 
-      if (deathsDelta === 0 && rebirthsDelta === 0) return;
+      if (deathsDelta === BigInt(0) && rebirthsDelta === BigInt(0)) return;
 
       try {
         const res = await fetch("/api/statistics", {
           method: "PUT",
-          body: JSON.stringify({ deaths: deathsDelta, rebirths: rebirthsDelta }),
+          body: JSON.stringify({ deaths: deathsDelta.toString(), rebirths: rebirthsDelta.toString() }),
         });
 
         if (res.ok) {

@@ -14,8 +14,8 @@ async function main() {
     update: {},
     create: {
       id: 1,
-      deaths: 0,
-      rebirths: 0
+      deaths: BigInt(0),
+      rebirths: BigInt(0)
     }
   })
 }

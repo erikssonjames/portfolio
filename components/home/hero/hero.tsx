@@ -174,24 +174,6 @@ export function Hero() {
                   </p>
                 </MotionReveal>
 
-                {/* <MotionStagger className="mt-6 grid gap-3">
-                  {[
-                    { title: "Frontend that feels intentional", desc: "Clear hierarchy, motion with restraint, and details that make products feel cared for." },
-                    { title: "Fullstack delivery", desc: "From polished UI to APIs, data, and the system choices needed to ship confidently." },
-                    { title: "Fast iteration without chaos", desc: "I optimize for momentum, but I still want the next version to be easier, not messier." },
-                  ].map((feature) => (
-                    <MotionReveal key={feature.title} variants={revealItemVariants}>
-                      <div className="rounded-xl border border-yellow-400/15 bg-black/30 p-4 shadow-[inset_0_0_18px_rgba(250,204,21,0.08)]">
-                        <div className="flex items-center justify-between gap-3">
-                          <p className="font-medium text-zinc-100">{feature.title}</p>
-                          <span className="h-2 w-2 rounded-full bg-yellow-300 shadow-[0_0_16px_rgba(250,204,21,0.6)]" />
-                        </div>
-                        <p className="mt-1 text-sm text-zinc-300">{feature.desc}</p>
-                      </div>
-                    </MotionReveal>
-                  ))}
-                </MotionStagger> */}
-
                 <MotionStagger className="mt-7 grid gap-3">
                   <MotionReveal variants={revealItemVariants}>
                     <div className="grid gap-3 rounded-2xl border border-yellow-400/15 bg-black/25 p-4 sm:grid-cols-3">

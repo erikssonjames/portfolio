@@ -247,6 +247,69 @@ export const allProjects: ProjectType[] = [
     ]
   },
   {
+    slug: "stayhaven",
+    title: "stayhaven - Vacation Home Demo App",
+    headline: "A lightweight demo for browsing and managing vacation-home stays.",
+    description:
+      "A demo vacation-home app with minimal functionality today, focused on validating the core stay discovery and booking flow direction.",
+    stack: [],
+    liveUrl: "https://stayhaven.jameseriksson.com",
+    repoUrl: "https://github.com/erikssonjames/stayhaven",
+    healthCheckUrl: "https://stayhaven.jameseriksson.com",
+    status: "IN_PRODUCTION",
+    role: "Concept framing, implementation, and demo deployment.",
+    planning: [
+      "Keep the scope intentionally narrow so the demo can validate core vacation-home use cases quickly.",
+      "Prioritize a simple guest journey over feature depth while the product direction is still being shaped.",
+      "Use early feedback to decide which booking and host-management capabilities should be expanded next."
+    ],
+    timeline: [
+      {
+        phase: "Concept setup",
+        focus: "Define the smallest vacation-home product slice worth demoing.",
+        output: "A compact demo scope centered on core stay flows."
+      },
+      {
+        phase: "MVP implementation",
+        focus: "Build minimal screens and flows to make the concept tangible.",
+        output: "A working public demo with intentionally limited functionality."
+      },
+      {
+        phase: "Demo release",
+        focus: "Deploy the app and prepare for iterative improvements from real usage.",
+        output: "A live baseline for feedback-driven product iteration."
+      }
+    ],
+    sections: [
+      {
+        title: "Current state",
+        items: [
+          "stayhaven is currently a demo build with minimal functionality by design.",
+          "The goal at this stage is to validate product direction before expanding scope."
+        ]
+      },
+      {
+        title: "Product focus",
+        items: [
+          "The app is focused on vacation-home use cases and a clean path through key user actions.",
+          "Feature depth is intentionally limited so iteration can stay fast and practical."
+        ]
+      },
+      {
+        title: "Next evolution",
+        items: [
+          "Future development will prioritize the highest-value booking and management improvements.",
+          "The demo foundation exists to support incremental product hardening over time."
+        ]
+      }
+    ],
+    nextSteps: [
+      "Expand booking flow depth with stronger state handling and clearer confirmation UX.",
+      "Add richer property details and host-side management capabilities.",
+      "Introduce authentication and persistence improvements as the demo matures."
+    ]
+  },
+  {
     slug: "portfolio-v1",
     title: "Portfolio v1 - Motion-First Personal Site",
     headline: "A personal site built to communicate solution ownership, clarity, and intentional engineering.",

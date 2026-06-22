@@ -4,6 +4,11 @@ export type StackLabel =
   | "Next.js"
   | "React"
   | "TypeScript"
+  | "Python"
+  | "NoSQL"
+  | "Java"
+  | "Spring Boot"
+  | "RabbitMQ"
   | "Supabase"
   | "PostgreSQL"
   | "shadcn/ui"
@@ -63,6 +68,8 @@ export const allProjects: ProjectType[] = [
       "Jest",
       "Cypress",
     ],
+    liveUrl: "https://restaurants.jameseriksson.com/",
+    repoUrl: "https://github.com/erikssonjames/restaurant-discovery",
     status: "DONE",
     role: "Full-stack product design and implementation, from search experience and content structure to CMS integration, quality assurance, and SEO foundations.",
     planning: [
@@ -201,7 +208,7 @@ export const allProjects: ProjectType[] = [
     headline: "A collaborative work platform where I contributed key product surfaces used to orient work and track progress.",
     description:
       "Vroff is a Swedish digital workspace that brings meetings, chat, projects, KPIs, and calendar into one platform. My contribution focused on the metric dashboard, project cards, and the login/flow experience that helped users get into the product and understand their work at a glance.",
-    stack: [],
+    stack: ["React", "Python", "NoSQL", "Tailwind CSS"],
     liveUrl: "https://www.vroff.com/",
     healthCheckUrl: "https://www.vroff.com/",
     status: "IN_PRODUCTION",
@@ -337,7 +344,7 @@ export const allProjects: ProjectType[] = [
     headline: "A lightweight demo for browsing and managing vacation-home stays.",
     description:
       "A demo vacation-home app with minimal functionality today, focused on validating the core stay discovery and booking flow direction.",
-    stack: [],
+    stack: ["Next.js", "Java", "Spring Boot", "PostgreSQL", "RabbitMQ"],
     liveUrl: "https://stayhaven.jameseriksson.com",
     repoUrl: "https://github.com/erikssonjames/stayhaven",
     healthCheckUrl: "https://stayhaven.jameseriksson.com",

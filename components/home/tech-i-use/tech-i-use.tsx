@@ -10,7 +10,16 @@ const techGroups = [
     icon: ServerCog,
     title: "Backend & architecture",
     description: "Services, API design, platform thinking, and pragmatic system decisions.",
-    items: ["Java", "Spring Boot", "REST APIs", "Architecture", "KPIs", "Reliability"],
+    items: [
+      "Java",
+      "Spring Boot",
+      "Python",
+      "RabbitMQ",
+      "REST APIs",
+      "Architecture",
+      "KPIs",
+      "Reliability",
+    ],
   },
   {
     icon: LayoutTemplate,
@@ -34,6 +43,7 @@ const techGroups = [
     items: [
       "Supabase",
       "Postgres",
+      "NoSQL",
       "Strapi",
       "Jest",
       "Cypress",

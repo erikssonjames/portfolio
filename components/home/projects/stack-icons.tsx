@@ -2,12 +2,18 @@ import Link from "next/link"
 import { ArrowUpRight } from "lucide-react"
 import {
   siFramer,
+  siCypress,
+  siJest,
   siNextdotjs,
+  siPostgresql,
+  siReact,
   siResend,
   siShadcnui,
   siShopify,
+  siStrapi,
   siSupabase,
   siTailwindcss,
+  siTypescript,
   type SimpleIcon,
 } from "simple-icons"
 import { HoverCard, HoverCardContent, HoverCardTrigger } from "@/components/ui/hover-card"
@@ -32,16 +38,36 @@ const stackMetaMap: Record<StackLabel, StackMeta> = {
     description: "React framework for routing, rendering, and production-ready full-stack apps.",
     needsLightInset: true,
   },
+  React: {
+    icon: siReact,
+    href: "https://react.dev/",
+    description: "JavaScript library for building component-driven user interfaces.",
+  },
+  TypeScript: {
+    icon: siTypescript,
+    href: "https://www.typescriptlang.org/",
+    description: "Typed JavaScript that makes large application codebases safer to evolve.",
+  },
   Supabase: {
     icon: siSupabase,
     href: "https://supabase.com/",
     description: "Backend platform for Postgres, auth, storage, and realtime features.",
+  },
+  PostgreSQL: {
+    icon: siPostgresql,
+    href: "https://www.postgresql.org/",
+    description: "Open-source relational database for structured, connected application data.",
   },
   "shadcn/ui": {
     icon: siShadcnui,
     href: "https://ui.shadcn.com/",
     description: "Composable UI building blocks based on Radix and Tailwind CSS.",
     needsLightInset: true,
+  },
+  Strapi: {
+    icon: siStrapi,
+    href: "https://strapi.io/",
+    description: "Headless CMS for modelling and managing structured product content.",
   },
   Shopify: {
     icon: siShopify,
@@ -63,6 +89,16 @@ const stackMetaMap: Record<StackLabel, StackMeta> = {
     icon: siFramer,
     href: "https://www.framer.com/motion/",
     description: "Animation library for expressive motion and interaction design in React.",
+  },
+  Jest: {
+    icon: siJest,
+    href: "https://jestjs.io/",
+    description: "JavaScript testing framework for validating application behaviour.",
+  },
+  Cypress: {
+    icon: siCypress,
+    href: "https://www.cypress.io/",
+    description: "End-to-end testing framework for verifying real user flows in the browser.",
   },
 }
 

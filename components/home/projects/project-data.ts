@@ -2,12 +2,18 @@ export type ProjectStatus = "DONE" | "IN_PRODUCTION" | "UNAVAILABLE"
 
 export type StackLabel =
   | "Next.js"
+  | "React"
+  | "TypeScript"
   | "Supabase"
+  | "PostgreSQL"
   | "shadcn/ui"
+  | "Strapi"
   | "Shopify"
   | "Resend"
   | "Tailwind CSS"
   | "Framer Motion"
+  | "Jest"
+  | "Cypress"
 
 export type ProjectTimelineItem = {
   phase: string
@@ -39,6 +45,85 @@ export type ProjectType = {
 }
 
 export const allProjects: ProjectType[] = [
+  {
+    slug: "restaurant-discovery",
+    title: "Restaurant Discovery - Restaurant Search Platform",
+    headline: "A full-stack discovery experience for finding the right place to eat, from broad city searches to the details that make a decision easy.",
+    description:
+      "A restaurant discovery platform for searching by city, cuisine, price range, menu items, and current availability, with dedicated city and cuisine pages plus detailed restaurant profiles.",
+    stack: [
+      "Next.js",
+      "React",
+      "TypeScript",
+      "Tailwind CSS",
+      "shadcn/ui",
+      "Strapi",
+      "Supabase",
+      "PostgreSQL",
+      "Jest",
+      "Cypress",
+    ],
+    status: "DONE",
+    role: "Full-stack product design and implementation, from search experience and content structure to CMS integration, quality assurance, and SEO foundations.",
+    planning: [
+      "Frame restaurant discovery around the moments that affect a dining decision: location, cuisine, budget, menu preferences, ratings, and whether a table is available now.",
+      "Use dedicated city and cuisine landing pages to make popular browsing paths useful for people while creating a strong, scalable SEO structure.",
+      "Keep editorial content manageable by separating the customer-facing Next.js experience from Strapi, with Supabase PostgreSQL providing the underlying data foundation.",
+    ],
+    timeline: [
+      {
+        phase: "Search model",
+        focus: "Define the filters and content relationships needed to move from a broad restaurant search to a confident choice.",
+        output: "A discovery flow covering city, cuisine, price, menu items, ratings, and availability.",
+      },
+      {
+        phase: "Content architecture",
+        focus: "Structure restaurant, menu, review, location, and landing-page content so it can be maintained without code releases.",
+        output: "A Strapi CMS model backed by Supabase PostgreSQL for practical editorial workflows.",
+      },
+      {
+        phase: "Experience build",
+        focus: "Create responsive listings, landing pages, and detailed restaurant profiles with clear visual hierarchy.",
+        output: "A polished Next.js and shadcn/ui product surface built with TypeScript and Tailwind CSS.",
+      },
+      {
+        phase: "Quality and discoverability",
+        focus: "Make the platform easy to find, share, use, and validate across the critical browsing journey.",
+        output: "SEO metadata, structured data, sitemap and robots support, social images, CMS revalidation, accessibility checks, and automated tests.",
+      },
+    ],
+    sections: [
+      {
+        title: "Discovery that narrows naturally",
+        items: [
+          "The experience starts broad enough for exploration but makes it easy to refine results by the factors diners genuinely care about.",
+          "Restaurant profiles bring images, menus, reviews, ratings, contact details, and availability into one decision-ready view.",
+          "City and cuisine pages provide useful browsing destinations instead of treating SEO pages as thin, duplicated content.",
+        ],
+      },
+      {
+        title: "Editorially flexible foundation",
+        items: [
+          "Strapi gives content teams a clear place to manage listings and supporting editorial content without coupling every update to a frontend deployment.",
+          "Supabase PostgreSQL provides a dependable relational foundation for the connected restaurant, menu, location, and review data.",
+          "On-demand revalidation keeps published content fresh in the Next.js frontend without sacrificing fast delivery.",
+        ],
+      },
+      {
+        title: "Built for confidence",
+        items: [
+          "Search-friendly metadata, structured data, sitemap and robots support, and social sharing images make the product easier to discover and present well when shared.",
+          "Responsive layouts and accessibility checks keep the core discovery experience usable across devices and input methods.",
+          "Jest and Cypress cover important behaviour so iteration does not quietly erode the restaurant-search journey.",
+        ],
+      },
+    ],
+    nextSteps: [
+      "Add map-based exploration and neighbourhood-level recommendations for more spatially intuitive discovery.",
+      "Introduce saved restaurants and personalised suggestions based on dining preferences and past activity.",
+      "Expand real-time reservation and availability integrations for a tighter path from searching to booking.",
+    ],
+  },
   {
     slug: "gym-quest",
     title: "Gym Quest - Gamified Training Tracker",

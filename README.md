@@ -6,6 +6,8 @@ This repo runs your portfolio locally with:
 - **Postgres** (via Docker)
 - **Prisma** (migrations + client)
 
+For the information and template needed to add a project, see [Adding a project](docs/adding-a-project.md).
+
 > In **Kubernetes**, `DATABASE_URL` comes from a Secret.  
 > Locally, `DATABASE_URL` comes from `.env.local`.
 

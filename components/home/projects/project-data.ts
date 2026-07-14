@@ -469,6 +469,86 @@ export const allProjects: ProjectType[] = [
       "Add richer detail pages for more projects so the site scales beyond a single landing page.",
       "Continue refining performance and content density as the portfolio grows."
     ]
+  },
+  {
+    slug: "mewtual",
+    title: "Mewtual - Private Cat Sharing",
+    headline: "A mobile-first social platform for sharing cat photos and updates with family and friends.",
+    description: "Mewtual provides a private space for families and friends to share cat photos, stories, milestones, comments, and notifications.",
+    stack: [
+      "React",
+      "TypeScript",
+      "PostgreSQL",
+      "shadcn/ui",
+      "Tailwind CSS",
+      "Resend"
+    ],
+    repoUrl: "https://github.com/erikssonjames/mewtual",
+    status: "IN_PRODUCTION",
+    role: "Owned the product planning, interface design, frontend and backend implementation, PostgreSQL data modelling, authentication, media handling, real-time updates, moderation workflows, and automated testing.",
+    planning: [
+      "Defined the product around private sharing for families and close friends rather than a public social network.",
+      "Prioritised a mobile-first browsing and posting experience for quickly sharing cat photos from any device.",
+      "Designed the data model around users, cats, posts, stories, comments, milestones, notifications, and moderation reports.",
+      "Added privacy, authentication, rate limiting, reporting, and administrative workflows as core product requirements."
+    ],
+    timeline: [
+      {
+        phase: "Discovery",
+        focus: "Framed the audience, privacy model, and primary sharing workflows.",
+        output: "A focused product concept for private cat communities."
+      },
+      {
+        phase: "Architecture",
+        focus: "Defined the React frontend, TypeScript API, PostgreSQL schema, authentication model, and media workflow.",
+        output: "A full-stack foundation with separated frontend and backend workspaces."
+      },
+      {
+        phase: "Build",
+        focus: "Implemented posts, stories, cat profiles, comments, reactions, milestones, notifications, sharing, and real-time updates.",
+        output: "A usable social platform for sharing and discovering cat activity."
+      },
+      {
+        phase: "Safety and Quality",
+        focus: "Added moderation tools, reporting, account controls, accessibility coverage, integration tests, and security-focused tests.",
+        output: "A more reliable and maintainable product with safety mechanisms built into the core experience."
+      }
+    ],
+    sections: [
+      {
+        title: "The problem",
+        items: [
+          "Families and friends needed a dedicated place to share cat photos and updates without relying on a public social network.",
+          "The product needed to make frequent, lightweight sharing feel natural while keeping content within trusted communities."
+        ]
+      },
+      {
+        title: "Product direction",
+        items: [
+          "The experience was shaped around mobile-first browsing, fast media sharing, cat-specific profiles, and temporary stories.",
+          "Milestones and structured cat information added more lasting value than a simple chronological photo feed."
+        ]
+      },
+      {
+        title: "My contribution",
+        items: [
+          "Planned and implemented the product across the frontend, backend, database schema, authentication, media processing, and real-time features.",
+          "Built moderation and reporting flows so administrators could review problematic posts, comments, stories, users, and cat profiles."
+        ]
+      },
+      {
+        title: "Outcome",
+        items: [
+          "Mewtual became a cohesive private-sharing platform with social features, structured cat profiles, and safety controls.",
+          "The codebase includes automated unit, integration, security, accessibility, and end-to-end coverage for continued development."
+        ]
+      }
+    ],
+    nextSteps: [
+      "Add production deployment and monitoring with a public health-check endpoint.",
+      "Improve media delivery with object storage, responsive image variants, and CDN caching.",
+      "Expand community controls with invitations, family groups, granular permissions, and richer notification preferences."
+    ]
   }
 ]
 

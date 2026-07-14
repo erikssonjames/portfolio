@@ -406,7 +406,7 @@ export const allProjects: ProjectType[] = [
     title: "Portfolio v1 - Motion-First Personal Site",
     headline: "A personal site built to communicate solution ownership, clarity, and intentional engineering.",
     description:
-      "A neon-accented portfolio with crisp typography, Framer Motion interactions, and obsessive performance tuning for a snappy feel.",
+      "A structured, rust-accented portfolio with crisp typography, Framer Motion interactions, and obsessive performance tuning for a snappy feel.",
     stack: ["Tailwind CSS", "Next.js", "Framer Motion"],
     liveUrl: "https://jameseriksson.com/",
     repoUrl: "https://github.com/erikssonjames/portfolio",

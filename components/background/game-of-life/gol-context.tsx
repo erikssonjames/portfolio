@@ -15,7 +15,6 @@ type GolApi = {
   randomizeToken: number;   // increment to signal randomize
   requestRestart: () => void;
   requestRandomize: () => void;
-  toggleBrush: () => void,
   localDeaths: bigint,
   localRebirths: bigint,
   updateLocalDeaths: (deaths: number) => void,
@@ -88,7 +87,6 @@ export function GolProvider({ children }: { children: React.ReactNode }) {
     randomizeToken,
     requestRestart: () => setRestartToken((t) => t + 1),
     requestRandomize: () => setRandomizeToken((t) => t + 1),
-    toggleBrush: () => setSettings(prev => ({...prev, disableBrush: !prev.disableBrush})),
     localDeaths,
     localRebirths,
     updateLocalDeaths,

@@ -16,7 +16,7 @@ const geistMono = Geist_Mono({
 
 export const metadata: Metadata = {
   title: "James Eriksson Portfolio",
-  description: "Game of life",
+  description: "James Eriksson — fullstack consultant focused on customer-led solution delivery.",
   icons: {
     icon: "/logo.png",
     shortcut: "/logo.png",

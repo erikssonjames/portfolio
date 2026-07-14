@@ -1,7 +1,6 @@
 "use client"
 
 import * as React from "react"
-import { HoverCard, HoverCardContent, HoverCardTrigger } from "@/components/ui/hover-card"
 import { cn } from "@/lib/utils"
 import { ArrowRight, CircleHelp } from "lucide-react"
 
@@ -186,49 +185,32 @@ function GameOfLifeInfoCard() {
 }
 
 export function GameOfLifeInfoButton() {
-  const [hoverOpen, setHoverOpen] = React.useState(false)
   const [pinnedOpen, setPinnedOpen] = React.useState(false)
 
   return (
-    <HoverCard
-      open={pinnedOpen || hoverOpen}
-      onOpenChange={(next) => {
-        if (!pinnedOpen) setHoverOpen(next)
-      }}
-      openDelay={120}
-      closeDelay={120}
-    >
-      <HoverCardTrigger asChild>
+    <div className="relative">
         <button
           type="button"
           aria-label="Explain Game of Life"
           aria-pressed={pinnedOpen}
           onClick={(event) => {
             event.stopPropagation()
-            setPinnedOpen((prev) => {
-              const next = !prev
-              setHoverOpen(next)
-              return next
-            })
+            setPinnedOpen((prev) => !prev)
           }}
           className={cn(
-            "inline-flex h-8 w-8 items-center justify-center rounded-full border border-yellow-400/20 bg-yellow-400/10 text-yellow-100 transition-colors",
+            "inline-flex h-8 w-8 items-center justify-center rounded-none border border-yellow-400/20 bg-yellow-400/10 text-yellow-100 transition-colors",
             "hover:bg-yellow-400/20 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-yellow-400/40",
             pinnedOpen && "bg-yellow-400/20"
           )}
         >
           <CircleHelp className="h-4 w-4" />
         </button>
-      </HoverCardTrigger>
 
-      <HoverCardContent
-        align="end"
-        side="top"
-        sideOffset={12}
-        className="w-[min(26rem,calc(100vw-2rem))] border border-white/10 bg-zinc-950/95 p-4 shadow-[0_24px_60px_rgba(0,0,0,0.45)] backdrop-blur-xl"
-      >
-        <GameOfLifeInfoCard />
-      </HoverCardContent>
-    </HoverCard>
+      {pinnedOpen ? (
+        <div className="absolute bottom-full right-0 z-50 mb-3 w-[min(26rem,calc(100vw-2rem))] border border-white/10 bg-zinc-950/95 p-4 shadow-xl">
+          <GameOfLifeInfoCard />
+        </div>
+      ) : null}
+    </div>
   )
 }

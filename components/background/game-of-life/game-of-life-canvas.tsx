@@ -1,10 +1,9 @@
 "use client";
 
 import { CSSProperties, useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { drawRoundedRect, drawVignette, parseRgb, rgbToStr, stampSparseDisc } from "./lib/canvas";
+import { drawVignette, parseRgb, rgbToStr, stampSparseDisc } from "./lib/canvas";
 import { randomize, step } from "./lib/gol";
 import { useGol } from "./gol-context";
-import type { GolSettings } from "./game-of-life-settings";
 
 type GridDims = {
   cols: number;
@@ -12,34 +11,22 @@ type GridDims = {
 };
 
 const CELL_GAP = 1;
-const BRUSH_PROTECTION_TICKS = 3;
-const BRUSH_ACTIVE_MS = 120;
-const BRUSH_OVERLAY_IDLE_MS = 220;
 const MAX_DPR = 1.5;
 
 type IntroStage = "dead" | "loading" | "revealed";
-
-function getBrushRadiusCells(settings: GolSettings, startedAt: number, now: number) {
-  const targetRadius = Math.max(1, Math.round(settings.brushMaxRadius / 4));
-  const growthMs = Math.max(1, settings.brushGrowthMs);
-  const elapsed = Math.max(0, now - startedAt);
-  const progress = Math.min(1, elapsed / growthMs);
-  return Math.max(1, Math.round(1 + (targetRadius - 1) * progress));
-}
 
 export function GameOfLifeCanvas({ introStage = "revealed" }: { introStage?: IntroStage }) {
   const { isPlaying, restartToken, randomizeToken, settings, updateLocalDeaths, updateLocalRebirths } = useGol();
 
   const [baseColors, setBaseColors] = useState({
-    aliveCss: "rgb(253,224,71)",
-    deadCss: "rgb(0,0,0)",
+    aliveCss: "rgb(205,119,71)",
+    deadCss: "rgb(8,17,25)",
   });
   const introStageRef = useRef<IntroStage>(introStage);
   const settingsRef = useRef(settings);
   const isPlayingRef = useRef(isPlaying);
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
   const containerRef = useRef<HTMLDivElement | null>(null);
-  const brushOutlineRef = useRef<HTMLDivElement | null>(null);
   const aliveProbeRef = useRef<HTMLDivElement | null>(null);
   const deadProbeRef = useRef<HTMLDivElement | null>(null);
   const boardRef = useRef<Uint8Array>(new Uint8Array());
@@ -47,12 +34,6 @@ export function GameOfLifeCanvas({ introStage = "revealed" }: { introStage?: Int
   const protectionRef = useRef<Uint8Array>(new Uint8Array());
   const dimsRef = useRef<GridDims>({ cols: 0, rows: 0 });
   const timerRef = useRef<number | null>(null);
-  const lastHoverCellRef = useRef<{ x: number; y: number } | null>(null);
-  const brushVisibleRef = useRef(false);
-  const brushPointRef = useRef({ x: 0, y: 0 });
-  const brushStartedAtRef = useRef(0);
-  const brushActiveUntilRef = useRef(0);
-  const brushOverlayTimeoutRef = useRef<number | null>(null);
 
   useEffect(() => {
     settingsRef.current = settings;
@@ -68,21 +49,21 @@ export function GameOfLifeCanvas({ introStage = "revealed" }: { introStage?: Int
 
   const probeClasses = useMemo(
     () => ({
-      dead: "bg-black",
-      alive: "bg-yellow-300 rounded-sm",
+      dead: "bg-slate-950",
+      alive: "bg-orange-300",
     }),
     []
   );
 
   const themeColors = useMemo(() => {
-    const baseAlive = parseRgb(baseColors.aliveCss) ?? { r: 253, g: 224, b: 71 };
-    const baseDead = parseRgb(baseColors.deadCss) ?? { r: 0, g: 0, b: 0 };
+    const baseAlive = parseRgb(baseColors.aliveCss) ?? { r: 205, g: 119, b: 71 };
+    const baseDead = parseRgb(baseColors.deadCss) ?? { r: 8, g: 17, b: 25 };
 
     if (settings.theme === "classic") {
       return {
         alive: rgbToStr(baseAlive),
         dead: rgbToStr(baseDead),
-        glowBlur: Math.max(6, settings.glowStrength),
+        glowBlur: 0,
       };
     }
 
@@ -90,14 +71,14 @@ export function GameOfLifeCanvas({ introStage = "revealed" }: { introStage?: Int
       return {
         alive: "rgb(232,234,237)",
         dead: "rgb(12,12,16)",
-        glowBlur: Math.max(4, settings.glowStrength * 0.8),
+        glowBlur: 0,
       };
     }
 
     return {
-      alive: "rgb(56,244,214)",
-      dead: "rgb(4,10,20)",
-      glowBlur: Math.max(8, settings.glowStrength * 1.25),
+      alive: "rgb(112,157,173)",
+      dead: "rgb(8,17,25)",
+      glowBlur: 0,
     };
   }, [baseColors.aliveCss, baseColors.deadCss, settings]);
 
@@ -120,18 +101,16 @@ export function GameOfLifeCanvas({ introStage = "revealed" }: { introStage?: Int
     ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
     ctx.clearRect(0, 0, width, height);
 
-    const { alive, dead, glowBlur } = themeColors;
+    const { alive, dead } = themeColors;
     ctx.fillStyle = dead;
     ctx.fillRect(0, 0, width, height);
 
     const inset = CELL_GAP;
     const size = s.cellSize - inset * 2;
-    const radius = Math.max(0, Math.min(Math.floor(s.cellSize * 0.12), size / 2));
-
     ctx.save();
     ctx.fillStyle = alive;
-    ctx.shadowColor = alive;
-    ctx.shadowBlur = glowBlur;
+    ctx.shadowColor = "transparent";
+    ctx.shadowBlur = 0;
 
     for (let y = 0; y < rows; y++) {
       const rowOffset = y * cols;
@@ -140,8 +119,7 @@ export function GameOfLifeCanvas({ introStage = "revealed" }: { introStage?: Int
         if (board[rowOffset + x] !== 1) continue;
 
         const px = x * s.cellSize + inset;
-        if (radius > 0) drawRoundedRect(ctx, px, py, size, size, radius);
-        else ctx.fillRect(px, py, size, size);
+        ctx.fillRect(px, py, size, size);
       }
     }
 
@@ -180,7 +158,6 @@ export function GameOfLifeCanvas({ introStage = "revealed" }: { introStage?: Int
     if (introStageRef.current === "revealed") {
       randomize(boardRef.current, s.randomFill);
     }
-    lastHoverCellRef.current = null;
     renderBoard();
   }, [renderBoard]);
 
@@ -200,66 +177,6 @@ export function GameOfLifeCanvas({ introStage = "revealed" }: { introStage?: Int
     protectionRef.current = new Uint8Array(next.length);
     renderBoard();
   }, [renderBoard]);
-
-  const updateBrushOutline = useCallback(() => {
-    const outline = brushOutlineRef.current;
-    if (!outline) return;
-
-    const radiusCells = getBrushRadiusCells(settingsRef.current, brushStartedAtRef.current, performance.now());
-    const diameter = settingsRef.current.cellSize * (radiusCells * 2 + 1);
-    outline.style.width = `${diameter}px`;
-    outline.style.height = `${diameter}px`;
-    outline.style.transform = `translate(${brushPointRef.current.x - diameter / 2}px, ${brushPointRef.current.y - diameter / 2}px)`;
-    outline.style.opacity = brushVisibleRef.current && !settingsRef.current.disableBrush ? "1" : "0";
-  }, []);
-
-  const handlePointerMoveXY = useCallback(
-    (px: number, py: number) => {
-      const { cols, rows } = dimsRef.current;
-      const currentBoard = boardRef.current;
-      const s = settingsRef.current;
-
-      if (!currentBoard.length || !cols || !rows || s.disableBrush || introStageRef.current !== "revealed") return;
-
-      const cx = Math.floor(px / s.cellSize);
-      const cy = Math.floor(py / s.cellSize);
-      if (cx < 0 || cy < 0 || cx >= cols || cy >= rows) return;
-
-      const last = lastHoverCellRef.current;
-      if (last && last.x === cx && last.y === cy) return;
-      lastHoverCellRef.current = { x: cx, y: cy };
-
-      const now = performance.now();
-      brushActiveUntilRef.current = now + BRUSH_ACTIVE_MS;
-      const radius = getBrushRadiusCells(s, brushStartedAtRef.current || now, now);
-      const next = currentBoard.slice();
-      const { rebirths } = stampSparseDisc({
-        board: next,
-        cols,
-        rows,
-        cx,
-        cy,
-        radius,
-        density: s.brushDensity,
-        seed: (cx * 83492791) ^ (cy * 297657976),
-        ringBias: 0.25,
-      });
-
-      if (!rebirths) return;
-
-      const protection = protectionRef.current;
-      for (let i = 0; i < next.length; i++) {
-        if (currentBoard[i] !== next[i]) {
-          protection[i] = BRUSH_PROTECTION_TICKS;
-        }
-      }
-
-      boardRef.current = next;
-      updateLocalRebirths(rebirths);
-      renderBoard();
-    },
-    [renderBoard, updateLocalRebirths]
-  );
 
   useEffect(() => {
     const aliveProbe = aliveProbeRef.current;
@@ -285,17 +202,12 @@ export function GameOfLifeCanvas({ introStage = "revealed" }: { introStage?: Int
 
   useEffect(() => {
     renderBoard();
-    updateBrushOutline();
   }, [
     renderBoard,
-    updateBrushOutline,
     settings.backgroundOpacity,
     settings.glowStrength,
     settings.showVignette,
     settings.theme,
-    settings.disableBrush,
-    settings.brushMaxRadius,
-    settings.brushGrowthMs,
   ]);
 
   useEffect(() => {
@@ -305,8 +217,7 @@ export function GameOfLifeCanvas({ introStage = "revealed" }: { introStage?: Int
       }
 
       timerRef.current = window.setTimeout(() => {
-        const isBrushActive = brushActiveUntilRef.current > performance.now();
-        const shouldAdvance = isPlayingRef.current && !(settingsRef.current.pauseWhilePainting && isBrushActive);
+        const shouldAdvance = isPlayingRef.current;
 
         if (shouldAdvance) {
           const current = boardRef.current;
@@ -424,82 +335,6 @@ export function GameOfLifeCanvas({ introStage = "revealed" }: { introStage?: Int
     }
   }, [introStage, renderBoard]);
 
-  useEffect(() => {
-    const container = containerRef.current;
-    if (!container) return;
-
-    const toBoardXY = (clientX: number, clientY: number) => {
-      const rect = container.getBoundingClientRect();
-      return { x: clientX - rect.left, y: clientY - rect.top, rect };
-    };
-
-    const showBrushOverlay = () => {
-      if (introStageRef.current !== "revealed") return;
-
-      brushVisibleRef.current = true;
-      updateBrushOutline();
-
-      if (brushOverlayTimeoutRef.current) {
-        window.clearTimeout(brushOverlayTimeoutRef.current);
-      }
-
-      brushOverlayTimeoutRef.current = window.setTimeout(() => {
-        brushVisibleRef.current = false;
-        updateBrushOutline();
-      }, BRUSH_OVERLAY_IDLE_MS);
-    };
-
-    const onMove = (e: PointerEvent) => {
-      if (introStageRef.current !== "revealed") {
-        brushVisibleRef.current = false;
-        brushStartedAtRef.current = 0;
-        updateBrushOutline();
-        return;
-      }
-
-      const { x, y, rect } = toBoardXY(e.clientX, e.clientY);
-      if (x < 0 || y < 0 || x > rect.width || y > rect.height) {
-        brushVisibleRef.current = false;
-        brushStartedAtRef.current = 0;
-        updateBrushOutline();
-        return;
-      }
-
-      if (!brushStartedAtRef.current) {
-        brushStartedAtRef.current = performance.now();
-      }
-
-      brushPointRef.current = { x, y };
-      showBrushOverlay();
-      handlePointerMoveXY(x, y);
-    };
-
-    const hideBrush = () => {
-      brushVisibleRef.current = false;
-      brushStartedAtRef.current = 0;
-      if (brushOverlayTimeoutRef.current) {
-        window.clearTimeout(brushOverlayTimeoutRef.current);
-        brushOverlayTimeoutRef.current = null;
-      }
-      updateBrushOutline();
-    };
-
-    const onLeave = () => {
-      hideBrush();
-    };
-
-    window.addEventListener("pointermove", onMove, { capture: true });
-    window.addEventListener("pointerleave", onLeave);
-
-    return () => {
-      window.removeEventListener("pointermove", onMove, { capture: true });
-      window.removeEventListener("pointerleave", onLeave);
-      if (brushOverlayTimeoutRef.current) {
-        window.clearTimeout(brushOverlayTimeoutRef.current);
-      }
-    };
-  }, [handlePointerMoveXY, updateBrushOutline]);
-
   return (
     <div
       ref={containerRef}
@@ -518,7 +353,6 @@ export function GameOfLifeCanvas({ introStage = "revealed" }: { introStage?: Int
       </div>
 
       <canvas ref={canvasRef} className="gol-canvas absolute left-0 top-0 z-0 block" />
-      <div ref={brushOutlineRef} className="gol-brush-outline pointer-events-none absolute left-0 top-0 z-1" />
     </div>
   );
 }

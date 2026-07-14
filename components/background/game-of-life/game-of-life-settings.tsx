@@ -2,7 +2,6 @@
 
 import * as React from "react"
 import {
-  Brush,
   Palette,
   Play,
   RefreshCw,
@@ -24,14 +23,9 @@ export type GolSettings = {
   cellSize: number
   tickMs: number
   randomFill: number
-  pauseWhilePainting: boolean
-  brushMaxRadius: number
-  brushGrowthMs: number
-  brushDensity: number
   showVignette: boolean
   glowStrength: number
   theme: "classic" | "neon" | "mono"
-  disableBrush: boolean
 }
 
 export const DEFAULT_GOL_SETTINGS: GolSettings = {
@@ -39,14 +33,9 @@ export const DEFAULT_GOL_SETTINGS: GolSettings = {
   cellSize: 30,
   tickMs: 300,
   randomFill: 0.5,
-  pauseWhilePainting: false,
-  brushMaxRadius: 10,
-  brushGrowthMs: 250,
-  brushDensity: 0.55,
   showVignette: true,
   glowStrength: 10,
   theme: "classic",
-  disableBrush: false,
 }
 
 type GameOfLifeSettingsPanelProps = {
@@ -238,58 +227,6 @@ export function GameOfLifeSettingsPanel({
                   { label: "Low", value: 0.32 },
                   { label: "Mid", value: 0.5 },
                   { label: "High", value: 0.68 },
-                ]}
-              />
-            </MiniField>
-          </div>
-        </SectionCard>
-
-        <SectionCard
-          icon={Brush}
-          title="Brush"
-          trailing={
-            <div className="flex items-center gap-2 text-sm text-zinc-300">
-              <span className="text-xs text-zinc-400">Pause</span>
-              <Switch
-                checked={value.pauseWhilePainting}
-                onCheckedChange={(pauseWhilePainting) => set({ pauseWhilePainting })}
-              />
-            </div>
-          }
-        >
-          <div className="grid grid-cols-3 gap-2">
-            <MiniField label="Size">
-              <SegmentedControl
-                value={value.brushMaxRadius}
-                onChange={(brushMaxRadius) => set({ brushMaxRadius })}
-                options={[
-                  { label: "6px", value: 6 },
-                  { label: "10px", value: 10 },
-                  { label: "16px", value: 16 },
-                ]}
-              />
-            </MiniField>
-
-            <MiniField label="Growth">
-              <SegmentedControl
-                value={value.brushGrowthMs}
-                onChange={(brushGrowthMs) => set({ brushGrowthMs })}
-                options={[
-                  { label: "140", value: 140 },
-                  { label: "250", value: 250 },
-                  { label: "420", value: 420 },
-                ]}
-              />
-            </MiniField>
-
-            <MiniField label="Density">
-              <SegmentedControl
-                value={value.brushDensity}
-                onChange={(brushDensity) => set({ brushDensity })}
-                options={[
-                  { label: "Low", value: 0.32 },
-                  { label: "Mid", value: 0.55 },
-                  { label: "High", value: 0.8 },
                 ]}
               />
             </MiniField>

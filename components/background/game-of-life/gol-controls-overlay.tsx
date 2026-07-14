@@ -5,7 +5,7 @@ import { GameOfLifeInfoButton } from "./game-of-life-info-button";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuPortal, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { Button } from "@/components/ui/button";
 import { ButtonGroup } from "@/components/ui/button-group";
-import { Brush, Cog, Pause, Play, RotateCw } from "lucide-react";
+import { Cog, Pause, Play, RotateCw } from "lucide-react";
 import { useGol } from "./gol-context";
 
 export function GameOfLifeControlsOverlay() {
@@ -15,12 +15,11 @@ export function GameOfLifeControlsOverlay() {
     isPlaying,
     setIsPlaying,
     requestRestart,
-    requestRandomize,
-    toggleBrush
+    requestRandomize
   } = useGol();
 
   return (
-    <div className="flex items-center gap-2 rounded-2xl border border-white/10 bg-black/40 p-2 shadow-xl backdrop-blur">
+    <div className="flex items-center gap-2 rounded-none border border-white/10 bg-black/40 p-2 shadow-xl backdrop-blur">
       <ButtonGroup>
         <ButtonGroup>
           <Button size="sm" onClick={() => setIsPlaying((p) => !p)} variant="outline">
@@ -29,12 +28,6 @@ export function GameOfLifeControlsOverlay() {
 
           <Button size="sm" onClick={requestRestart} variant="outline">
             <RotateCw />
-          </Button>
-        </ButtonGroup>
-
-        <ButtonGroup>
-          <Button size="icon-sm" onClick={toggleBrush} variant={settings.disableBrush ? "destructive" : "outline"}>
-            <Brush />
           </Button>
         </ButtonGroup>
 

@@ -138,9 +138,9 @@ export const allProjects: ProjectType[] = [
     description:
       "A social, game-like workout tracker that turns gym progress into quests, streaks, and shared milestones, making consistency feel fun.",
     stack: ["Next.js", "Supabase", "shadcn/ui"],
-    liveUrl: "https://gym-quest-phi.vercel.app/",
+    liveUrl: "https://gymquest.jameseriksson.com/",
     repoUrl: "https://github.com/erikssonjames/gym-quest",
-    healthCheckUrl: "https://gym-quest-phi.vercel.app/",
+    healthCheckUrl: "https://gymquest.jameseriksson.com/",
     status: "IN_PRODUCTION",
     role: "Product planning, solution framing, technical implementation, and end-to-end delivery.",
     featured: true,

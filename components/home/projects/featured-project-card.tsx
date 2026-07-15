@@ -149,7 +149,9 @@ export function FeaturedProjectCard({
         <div className="flex flex-col gap-5 md:flex-row md:items-start md:justify-between">
           <div className="max-w-2xl">
             <div className="flex flex-wrap items-center gap-2">
-              <Badge className="bg-yellow-400 text-black">Featured</Badge>
+              <Badge className="border-yellow-300 bg-yellow-400 !text-black shadow-[0_0_14px_rgba(250,204,21,0.22)]">
+                Featured
+              </Badge>
 
               <Badge variant="outline" className={cn("border bg-black/30", statusBadgeStyle(project.status))}>
                 {project.status === "DONE"
@@ -177,11 +179,11 @@ export function FeaturedProjectCard({
             <div className="mt-6 flex flex-col gap-3 sm:flex-row">
               <Button
                 size="lg"
-                disabled={liveDisabled}
                 className={cn(
-                  "group relative bg-yellow-400 text-black shadow-[0_0_28px_rgba(250,204,21,0.35)] hover:bg-yellow-300",
-                  liveDisabled && "opacity-60"
+                  "group relative border-yellow-300 bg-yellow-400 !text-black shadow-[0_0_28px_rgba(250,204,21,0.35)] hover:bg-yellow-300",
+                  liveDisabled && "border-white/10 bg-white/5 !text-zinc-500 shadow-none"
                 )}
+                {...(liveDisabled ? { disabled: true } : {})}
                 asChild={!liveDisabled}
               >
                 {liveDisabled ? (

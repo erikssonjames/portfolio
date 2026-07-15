@@ -181,7 +181,11 @@ export function ProjectCard({
                 ) : null}
               </Badge>
 
-              <StackIcons stack={stack} className="flex flex-wrap items-center gap-2" />
+              <StackIcons
+                stack={stack}
+                maxVisible={slug === "restaurant-discovery" ? 4 : undefined}
+                className="flex flex-wrap items-center gap-2"
+              />
             </div>
           </div>
         </div>
@@ -194,11 +198,11 @@ export function ProjectCard({
       <CardFooter className="relative z-10 flex items-center justify-between gap-3">
         <Button
           variant="outline"
-          disabled={liveDisabled}
           className={cn(
-            "border-yellow-400/35 bg-black/30 text-yellow-100 hover:bg-yellow-400/10",
-            liveDisabled && "opacity-60"
+            "border-yellow-400/45 bg-yellow-400/10 text-yellow-100 hover:bg-yellow-400/20",
+            liveDisabled && "border-white/10 bg-white/5 text-zinc-500"
           )}
+          {...(liveDisabled ? { disabled: true } : {})}
           asChild={!liveDisabled}
         >
           {liveDisabled ? (

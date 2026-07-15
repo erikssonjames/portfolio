@@ -207,7 +207,7 @@ export function GameOfLifeInfoButton() {
         </button>
 
       {pinnedOpen ? (
-        <div className="absolute bottom-full right-0 z-50 mb-3 w-[min(26rem,calc(100vw-2rem))] border border-white/10 bg-zinc-950/95 p-4 shadow-xl">
+        <div className="fixed bottom-16 left-2 z-50 max-h-[calc(100dvh-5rem)] w-[min(26rem,calc(100vw-1rem))] overflow-y-auto overscroll-contain border border-white/10 bg-zinc-950/95 p-4 shadow-xl">
           <GameOfLifeInfoCard />
         </div>
       ) : null}

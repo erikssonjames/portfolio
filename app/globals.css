@@ -138,7 +138,7 @@
   filter: none !important;
 }
 
-*[class*="bg-yellow-"][class*="blur-"] {
+*:is([class*="bg-yellow-300/"][class*="blur-"], [class*="bg-yellow-400/"][class*="blur-"]) {
   display: none !important;
 }
 
@@ -150,11 +150,14 @@
   border-color: color-mix(in oklab, var(--primary) 48%, transparent) !important;
 }
 
-[class*="bg-yellow-"][class*="/"] {
+:is([class*="bg-yellow-300/"], [class*="bg-yellow-400/"]) {
   background-color: color-mix(in oklab, var(--primary) 14%, transparent) !important;
 }
 
-[class*="bg-yellow-"]:not([class*="/"]) {
+:is(
+  [class*="bg-yellow-300"]:not([class*="bg-yellow-300/"]),
+  [class*="bg-yellow-400"]:not([class*="bg-yellow-400/"])
+) {
   background-color: var(--primary) !important;
 }
 

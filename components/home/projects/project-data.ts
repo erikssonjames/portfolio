@@ -36,6 +36,7 @@ export type ProjectType = {
   title: string
   description: string
   stack: StackLabel[]
+  previewImage?: string
   repoUrl?: string
   liveUrl?: string
   healthCheckUrl?: string
@@ -144,6 +145,7 @@ export const allProjects: ProjectType[] = [
     status: "IN_PRODUCTION",
     role: "Product planning, solution framing, technical implementation, and end-to-end delivery.",
     featured: true,
+    previewImage: "/previews/gym-quest.png",
     planning: [
       "Frame the product around daily motivation, not just exercise logging, so the core loop feels rewarding before advanced features land.",
       "Prioritize progression systems early: quests, streaks, and milestones needed to feel coherent before polishing edge-case screens.",

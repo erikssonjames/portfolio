@@ -65,3 +65,18 @@ npm run db:seed
 ```bash
 npm run dev
 ```
+
+### Capture the featured project preview
+
+The featured Gym Quest card uses a locally stored Playwright screenshot so it does not depend on a third-party image proxy:
+
+```bash
+npx playwright install chromium
+npm run capture:preview
+```
+
+You can pass a different URL and output path when needed:
+
+```bash
+node scripts/capture-preview.mjs https://example.com public/previews/example.png
+```

@@ -11,11 +11,6 @@ import { Card, CardContent } from "@/components/ui/card"
 import type { ProjectType } from "./project-data"
 import { StackIcons } from "./stack-icons"
 
-function thumbUrl(url?: string) {
-  if (!url) return ""
-  return `https://image.thum.io/get/width/1200/noanimate/${url.trim()}`
-}
-
 type HealthState = "CHECKING" | "HEALTHY" | "DEGRADED" | "DOWN" | "UNKNOWN"
 
 function statusBadgeStyle(status: ProjectType["status"]) {
@@ -131,7 +126,7 @@ export function FeaturedProjectCard({
   }, [project.healthCheckUrl])
 
   const liveDisabled = !project.liveUrl || project.status === "UNAVAILABLE"
-  const screenshot = thumbUrl(project.liveUrl)
+  const screenshot = project.previewImage
 
   return (
     <Card

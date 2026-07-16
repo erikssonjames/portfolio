@@ -73,21 +73,21 @@ export function Projects() {
                   variant="secondary"
                   className="bg-zinc-900/70 text-zinc-200 ring-1 ring-yellow-400/15"
                 >
-                  Selected work
+                  A mix of work
                 </Badge>
               </MotionReveal>
             </MotionStagger>
 
             <MotionReveal delay={0.08}>
               <h2 className="mt-4 text-3xl font-semibold tracking-tight sm:text-4xl">
-                Things I&apos;ve built
+                Projects
               </h2>
             </MotionReveal>
 
             <MotionReveal delay={0.14}>
               <p className="mt-2 max-w-2xl text-zinc-300">
-                A few projects showing how I work from problem framing and stakeholder needs to
-                implementation and delivered outcomes.
+                A mix of personal projects and work I&apos;ve contributed to. Each project page keeps the
+                focus on what it is, what I used, and why that technology made sense.
               </p>
             </MotionReveal>
           </div>

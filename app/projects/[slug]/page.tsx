@@ -1,4 +1,5 @@
 import type { Metadata } from "next"
+import Image from "next/image"
 import Link from "next/link"
 import { notFound } from "next/navigation"
 import { ArrowLeft, ArrowUpRight, Github, Globe } from "lucide-react"
@@ -9,12 +10,11 @@ import {
   getProjectBySlug,
   type ProjectType,
 } from "@/components/home/projects/project-data"
-import { StackIcons } from "@/components/home/projects/stack-icons"
+import { getProjectTechnologyGroups } from "@/components/home/projects/project-technology"
+import { StackIcons, StackLogo } from "@/components/home/projects/stack-icons"
 
 type PageProps = {
-  params: Promise<{
-    slug: string
-  }>
+  params: Promise<{ slug: string }>
 }
 
 function statusLabel(status: ProjectType["status"]) {
@@ -40,34 +40,25 @@ function statusBadgeStyle(status: ProjectType["status"]) {
 }
 
 export async function generateStaticParams() {
-  return allProjects.map((project) => ({
-    slug: project.slug,
-  }))
+  return allProjects.map((project) => ({ slug: project.slug }))
 }
 
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
   const { slug } = await params
   const project = getProjectBySlug(slug)
 
-  if (!project) {
-    return {
-      title: "Project not found",
-    }
-  }
-
-  return {
-    title: `${project.title} | James Eriksson`,
-    description: project.headline,
-  }
+  return project
+    ? { title: `${project.title} | James Eriksson`, description: project.headline }
+    : { title: "Project not found" }
 }
 
 export default async function ProjectPage({ params }: PageProps) {
   const { slug } = await params
   const project = getProjectBySlug(slug)
 
-  if (!project) {
-    notFound()
-  }
+  if (!project) notFound()
+
+  const technologyGroups = getProjectTechnologyGroups(project)
 
   return (
     <main className="min-h-screen text-zinc-100">
@@ -80,163 +71,126 @@ export default async function ProjectPage({ params }: PageProps) {
           Back to projects
         </Link>
 
-        <section className="relative mt-8 overflow-hidden rounded-[2rem] border border-yellow-400/20 bg-zinc-950/85 p-8 shadow-[0_0_60px_rgba(250,204,21,0.10)] sm:p-10">
+        <section className="relative mt-8 overflow-hidden rounded-[2rem] border border-yellow-400/20 bg-zinc-950/85 p-4 shadow-[0_0_60px_rgba(250,204,21,0.10)] sm:p-6">
           <div className="pointer-events-none absolute inset-0">
             <div className="absolute -right-16 -top-16 h-56 w-56 rounded-full bg-yellow-400/12 blur-[80px]" />
             <div className="absolute bottom-0 left-8 h-48 w-48 rounded-full bg-yellow-300/8 blur-[72px]" />
           </div>
 
           <div className="relative">
-            <div className="flex flex-wrap items-center gap-2">
-              <Badge variant="outline" className={statusBadgeStyle(project.status)}>
-                {statusLabel(project.status)}
-              </Badge>
-              {project.stack.length > 0 ? (
-                <StackIcons stack={project.stack} className="flex flex-wrap items-center gap-2" />
-              ) : null}
-            </div>
-
-            <h1 className="mt-6 max-w-4xl text-4xl font-semibold tracking-tight sm:text-5xl">
-              {project.title}
-            </h1>
-            <p className="mt-4 max-w-3xl text-lg text-zinc-300">{project.headline}</p>
-
-            <div className="mt-8 grid gap-8 lg:grid-cols-[minmax(0,2fr)_minmax(320px,1fr)]">
-              <div>
-                <p className="max-w-3xl text-base leading-8 text-zinc-300">{project.description}</p>
-
-                <div className="mt-8 flex flex-wrap gap-3">
-                  {project.liveUrl ? (
-                    <Button asChild className="bg-yellow-400 text-black hover:bg-yellow-300">
-                      <a href={project.liveUrl} target="_blank" rel="noreferrer">
-                        Visit project
-                        <Globe className="ml-2 h-4 w-4" />
-                      </a>
-                    </Button>
-                  ) : null}
-
-                  {project.repoUrl ? (
-                    <Button
-                      asChild
-                      variant="outline"
-                      className="border-yellow-400/35 bg-black/30 text-yellow-100 hover:bg-yellow-400/10"
-                    >
-                      <a href={project.repoUrl} target="_blank" rel="noreferrer">
-                        View repository
-                        <Github className="ml-2 h-4 w-4" />
-                      </a>
-                    </Button>
-                  ) : null}
-                </div>
-              </div>
-
-              <aside className="rounded-2xl border border-yellow-400/15 bg-black/30 p-5">
-                <p className="text-xs font-medium uppercase tracking-[0.2em] text-zinc-500">Role</p>
-                <p className="mt-3 text-sm leading-7 text-zinc-300">{project.role}</p>
-
-                <p className="mt-6 text-xs font-medium uppercase tracking-[0.2em] text-zinc-500">Stack</p>
-                <div className="mt-3 flex flex-wrap gap-2">
-                  {project.stack.length > 0 ? (
-                    project.stack.map((item) => (
-                      <Badge
-                        key={item}
-                        variant="outline"
-                        className="border-yellow-400/25 bg-zinc-950/40 text-zinc-200"
-                      >
-                        {item}
-                      </Badge>
-                    ))
-                  ) : (
-                    <p className="text-sm leading-7 text-zinc-400">
-                      Private product work. Public stack details are intentionally limited.
-                    </p>
-                  )}
-                </div>
-              </aside>
-            </div>
-          </div>
-        </section>
-
-        <section className="mt-10 grid gap-6 lg:grid-cols-[minmax(0,1.05fr)_minmax(0,0.95fr)]">
-          <article className="rounded-[1.75rem] border border-yellow-400/15 bg-zinc-950/80 p-7">
-            <p className="text-xs font-medium uppercase tracking-[0.22em] text-zinc-500">Planning</p>
-            <h2 className="mt-3 text-2xl font-semibold">How the project was framed</h2>
-            <div className="mt-6 space-y-4 text-zinc-300">
-              {project.planning.map((item) => (
-                <div key={item} className="rounded-2xl border border-white/6 bg-black/20 p-4 leading-7">
-                  {item}
-                </div>
-              ))}
-            </div>
-          </article>
-
-          <article className="rounded-[1.75rem] border border-yellow-400/15 bg-zinc-950/80 p-7">
-            <p className="text-xs font-medium uppercase tracking-[0.22em] text-zinc-500">Timeline</p>
-            <h2 className="mt-3 text-2xl font-semibold">Build progression</h2>
-            <div className="mt-6 space-y-5">
-              {project.timeline.map((entry, index) => (
-                <div key={entry.phase} className="relative rounded-2xl border border-white/6 bg-black/20 p-5">
-                  <div className="mb-3 flex items-center gap-3">
-                    <div className="grid h-8 w-8 place-items-center rounded-full border border-yellow-400/30 bg-yellow-400/10 text-sm text-yellow-200">
-                      {index + 1}
-                    </div>
-                    <p className="text-lg font-medium">{entry.phase}</p>
+            <div className="relative aspect-video overflow-hidden rounded-xl border border-yellow-400/15 bg-zinc-900">
+              {project.previewImage ? (
+                <Image
+                  src={project.previewImage}
+                  alt={`${project.title} project preview`}
+                  fill
+                  priority
+                  className="object-cover"
+                  sizes="(max-width: 1024px) 100vw, 1152px"
+                />
+              ) : (
+                <div className="absolute inset-0 grid place-items-center bg-linear-to-br from-zinc-900 via-zinc-950 to-yellow-400/10 p-6 text-center">
+                  <div>
+                    <p className="text-xs uppercase tracking-[0.22em] text-yellow-200/75">Project preview</p>
+                    <p className="mt-2 text-sm text-zinc-400">A visual preview will be added here.</p>
                   </div>
-                  <p className="text-sm leading-7 text-zinc-300">
-                    <span className="text-zinc-100">Focus:</span> {entry.focus}
-                  </p>
-                  <p className="mt-2 text-sm leading-7 text-zinc-300">
-                    <span className="text-zinc-100">Output:</span> {entry.output}
-                  </p>
                 </div>
-              ))}
+              )}
+              <div className="pointer-events-none absolute inset-0 bg-linear-to-t from-black/35 via-transparent to-transparent" />
             </div>
-          </article>
-        </section>
 
-        <section className="mt-10 grid gap-6 lg:grid-cols-3">
-          {project.sections.map((section) => (
-            <article
-              key={section.title}
-              className="rounded-[1.75rem] border border-yellow-400/15 bg-zinc-950/80 p-7"
-            >
-              <p className="text-xs font-medium uppercase tracking-[0.22em] text-zinc-500">Case study</p>
-              <h2 className="mt-3 text-2xl font-semibold">{section.title}</h2>
-              <div className="mt-6 space-y-4 text-zinc-300">
-                {section.items.map((item) => (
-                  <p key={item} className="leading-7">
-                    {item}
-                  </p>
-                ))}
+            <div className="px-2 pb-2 pt-8 sm:px-4 sm:pt-10">
+              <div className="flex flex-wrap items-center gap-2">
+                <Badge variant="outline" className={statusBadgeStyle(project.status)}>
+                  {statusLabel(project.status)}
+                </Badge>
+                <StackIcons stack={project.stack} className="flex flex-wrap items-center gap-2" />
               </div>
-            </article>
-          ))}
+
+              <h1 className="mt-6 max-w-4xl text-4xl font-semibold tracking-tight sm:text-5xl">
+                {project.title}
+              </h1>
+              <p className="mt-4 max-w-3xl text-lg text-zinc-300">{project.headline}</p>
+
+              <div className="mt-8 grid gap-8 lg:grid-cols-[minmax(0,2fr)_minmax(320px,1fr)]">
+                <div>
+                  <p className="max-w-3xl text-base leading-8 text-zinc-300">{project.description}</p>
+
+                  <div className="mt-8 flex flex-wrap gap-3">
+                    {project.liveUrl ? (
+                      <Button asChild className="bg-yellow-400 text-black hover:bg-yellow-300">
+                        <a href={project.liveUrl} target="_blank" rel="noreferrer">
+                          Visit project
+                          <Globe className="ml-2 h-4 w-4" />
+                        </a>
+                      </Button>
+                    ) : null}
+                    {project.repoUrl ? (
+                      <Button asChild variant="outline" className="border-yellow-400/35 bg-black/30 text-yellow-100 hover:bg-yellow-400/10">
+                        <a href={project.repoUrl} target="_blank" rel="noreferrer">
+                          View repository
+                          <Github className="ml-2 h-4 w-4" />
+                        </a>
+                      </Button>
+                    ) : null}
+                  </div>
+                </div>
+
+                <aside className="rounded-2xl border border-yellow-400/15 bg-black/30 p-5">
+                  <div>
+                    <p className="text-xs font-medium uppercase tracking-[0.2em] text-zinc-500">Stack at a glance</p>
+                    <StackIcons stack={project.stack} className="mt-3 flex flex-wrap items-center gap-2" />
+                    <p className="mt-3 text-xs leading-5 text-zinc-500">
+                      Hover over a logo for a quick description. The full breakdown is below.
+                    </p>
+                  </div>
+                </aside>
+              </div>
+            </div>
+          </div>
         </section>
 
-        <section className="mt-10 rounded-[1.75rem] border border-yellow-400/15 bg-zinc-950/80 p-7">
-          <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
-            <div>
-              <p className="text-xs font-medium uppercase tracking-[0.22em] text-zinc-500">Next steps</p>
-              <h2 className="mt-3 text-2xl font-semibold">Where this project can go next</h2>
-            </div>
-
-            <Link
-              href="/#projects"
-              className="inline-flex items-center text-sm text-zinc-400 transition hover:text-yellow-200"
-            >
-              See all projects
-              <ArrowUpRight className="ml-2 h-4 w-4" />
-            </Link>
+        <section className="mt-10 rounded-[1.75rem] border border-yellow-400/15 bg-zinc-950/80 p-7 sm:p-8">
+          <p className="text-xs font-medium uppercase tracking-[0.22em] text-zinc-500">Technology overview</p>
+          <div className="mt-3 flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
+            <h2 className="text-2xl font-semibold sm:text-3xl">What each part of the stack does</h2>
+            <p className="max-w-xl text-sm leading-6 text-zinc-400">
+              A practical overview of the tools used here and the job each one was chosen to do.
+            </p>
           </div>
 
-          <div className="mt-6 grid gap-4 md:grid-cols-3">
-            {project.nextSteps.map((item) => (
-              <div key={item} className="rounded-2xl border border-white/6 bg-black/20 p-4 text-sm leading-7 text-zinc-300">
-                {item}
-              </div>
+          <div className="mt-7 grid gap-5 lg:grid-cols-2">
+            {technologyGroups.map((group) => (
+              <article key={group.label} className="rounded-xl border border-white/8 bg-black/20 p-5 sm:p-6">
+                <div className="border-b border-white/8 pb-4">
+                  <h3 className="text-lg font-semibold text-zinc-100">{group.label}</h3>
+                  <p className="mt-1 text-sm text-zinc-400">{group.description}</p>
+                </div>
+
+                <div className="mt-4 grid gap-3">
+                  {group.technologies.map((item) => (
+                    <div key={item.name} className="flex items-start gap-3 border border-white/8 bg-zinc-950/45 p-3">
+                      <div className="flex h-10 w-10 shrink-0 items-center justify-center border border-yellow-400/20 bg-black/30">
+                        <StackLogo item={item.name} />
+                      </div>
+                      <div className="min-w-0">
+                        <h4 className="font-medium text-zinc-100">{item.name}</h4>
+                        <p className="mt-1 text-sm leading-6 text-zinc-400">{item.reason}</p>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </article>
             ))}
           </div>
         </section>
+
+        <div className="mt-8 flex justify-end">
+          <Link href="/#projects" className="inline-flex items-center text-sm text-zinc-400 transition hover:text-yellow-200">
+            See all projects
+            <ArrowUpRight className="ml-2 h-4 w-4" />
+          </Link>
+        </div>
       </div>
     </main>
   )

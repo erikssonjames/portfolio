@@ -133,18 +133,26 @@ const stackMetaMap: Record<StackLabel, StackMeta> = {
   },
 }
 
-function BrandGlyph({ icon, needsLightInset }: { icon: SimpleIcon; needsLightInset?: boolean }) {
+function BrandGlyph({
+  icon,
+  needsLightInset,
+  large = false,
+}: {
+  icon: SimpleIcon
+  needsLightInset?: boolean
+  large?: boolean
+}) {
   return (
     <span
       className={
         needsLightInset
-          ? "flex h-5 w-5 items-center justify-center rounded-full bg-white/92 shadow-[inset_0_0_0_1px_rgba(0,0,0,0.08)]"
-          : "flex h-5 w-5 items-center justify-center"
+          ? `flex ${large ? "h-8 w-8" : "h-5 w-5"} items-center justify-center rounded-full bg-white/92 shadow-[inset_0_0_0_1px_rgba(0,0,0,0.08)]`
+          : `flex ${large ? "h-8 w-8" : "h-5 w-5"} items-center justify-center`
       }
     >
       <svg
         viewBox="0 0 24 24"
-        className="h-4 w-4"
+        className={large ? "h-5 w-5" : "h-4 w-4"}
         fill={`#${icon.hex}`}
         aria-hidden="true"
       >
@@ -152,6 +160,12 @@ function BrandGlyph({ icon, needsLightInset }: { icon: SimpleIcon; needsLightIns
       </svg>
     </span>
   )
+}
+
+export function StackLogo({ item }: { item: StackLabel }) {
+  const meta = stackMetaMap[item]
+
+  return <BrandGlyph icon={meta.icon} needsLightInset={meta.needsLightInset} large />
 }
 
 function StackIcon({ item }: { item: StackLabel }) {

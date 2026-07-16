@@ -71,8 +71,9 @@ export const allProjects: ProjectType[] = [
     ],
     liveUrl: "https://restaurants.jameseriksson.com/",
     repoUrl: "https://github.com/erikssonjames/restaurant-discovery",
+    previewImage: "/previews/restaurant-discovery.png",
     status: "DONE",
-    role: "Full-stack product design and implementation, from search experience and content structure to CMS integration, quality assurance, and SEO foundations.",
+    role: "Personal project: built the frontend, content setup, integrations, and tests.",
     planning: [
       "Frame restaurant discovery around the moments that affect a dining decision: location, cuisine, budget, menu preferences, ratings, and whether a table is available now.",
       "Use dedicated city and cuisine landing pages to make popular browsing paths useful for people while creating a strong, scalable SEO structure.",
@@ -143,7 +144,7 @@ export const allProjects: ProjectType[] = [
     repoUrl: "https://github.com/erikssonjames/gym-quest",
     healthCheckUrl: "https://gymquest.jameseriksson.com/",
     status: "IN_PRODUCTION",
-    role: "Product planning, solution framing, technical implementation, and end-to-end delivery.",
+    role: "Personal project: built the product UI, auth and persistence integration, and deployment.",
     featured: true,
     previewImage: "/previews/gym-quest.png",
     planning: [
@@ -213,6 +214,7 @@ export const allProjects: ProjectType[] = [
     stack: ["React", "Python", "NoSQL", "Tailwind CSS"],
     liveUrl: "https://www.vroff.com/",
     healthCheckUrl: "https://www.vroff.com/",
+    previewImage: "/previews/vroff.png",
     status: "IN_PRODUCTION",
     role: "Designed and implemented the metric dashboard, project cards, and login/flow pages as part of the product experience.",
     planning: [
@@ -282,8 +284,9 @@ export const allProjects: ProjectType[] = [
     liveUrl: "https://arts-and-crafts-website.vercel.app/",
     repoUrl: "https://github.com/erikssonjames/arts-and-crafts-website",
     healthCheckUrl: "https://arts-and-crafts-website.vercel.app/",
+    previewImage: "/previews/arts-and-crafts.png",
     status: "IN_PRODUCTION",
-    role: "Solution implementation, commerce flow design, and integration delivery.",
+    role: "Personal project: built the storefront and connected Shopify and transactional email.",
     planning: [
       "Keep the browsing experience lightweight so the products, textures, and photography do most of the talking.",
       "Reduce checkout friction by avoiding custom complexity where Shopify already solves the hard parts well.",
@@ -350,8 +353,9 @@ export const allProjects: ProjectType[] = [
     liveUrl: "https://stayhaven.jameseriksson.com",
     repoUrl: "https://github.com/erikssonjames/stayhaven",
     healthCheckUrl: "https://stayhaven.jameseriksson.com",
+    previewImage: "/previews/stayhaven.png",
     status: "IN_PRODUCTION",
-    role: "Concept framing, implementation, and demo deployment.",
+    role: "Personal project: built the demo interface and backend foundation.",
     planning: [
       "Keep the scope intentionally narrow so the demo can validate core vacation-home use cases quickly.",
       "Prioritize a simple guest journey over feature depth while the product direction is still being shaped.",
@@ -413,8 +417,9 @@ export const allProjects: ProjectType[] = [
     liveUrl: "https://jameseriksson.com/",
     repoUrl: "https://github.com/erikssonjames/portfolio",
     healthCheckUrl: "https://jameseriksson.com/",
+    previewImage: "/previews/portfolio-v1.png",
     status: "IN_PRODUCTION",
-    role: "Creative direction, interaction design, content framing, and implementation.",
+    role: "Personal project: built the site, project pages, and interactions.",
     planning: [
       "Use the site as both a portfolio and a signal of taste, which meant balancing personality, readability, and engineering discipline.",
       "Treat motion as part of the storytelling instead of a decorative layer added late.",
@@ -487,7 +492,7 @@ export const allProjects: ProjectType[] = [
     ],
     repoUrl: "https://github.com/erikssonjames/mewtual",
     status: "IN_PRODUCTION",
-    role: "Owned the product planning, interface design, frontend and backend implementation, PostgreSQL data modelling, authentication, media handling, real-time updates, moderation workflows, and automated testing.",
+    role: "Personal project: built the product across the UI, API, database, authentication, media, and moderation flows.",
     planning: [
       "Defined the product around private sharing for families and close friends rather than a public social network.",
       "Prioritised a mobile-first browsing and posting experience for quickly sharing cat photos from any device.",

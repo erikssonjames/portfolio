@@ -79,7 +79,7 @@ export function TechIUse() {
                   variant="secondary"
                   className="bg-zinc-900/70 text-zinc-200 ring-1 ring-yellow-400/15"
                 >
-                  Tools I ship with
+                  What I use
                 </Badge>
               </MotionReveal>
             </MotionStagger>
@@ -92,8 +92,8 @@ export function TechIUse() {
 
             <MotionReveal delay={0.14}>
               <p className="mt-2 max-w-2xl text-zinc-300">
-                The stack changes with the problem, but these are the tools and systems I reach
-                for most when building products end to end.
+                The stack changes with the project, but these are the tools and systems I use most
+                in my work and personal projects.
               </p>
             </MotionReveal>
           </div>
@@ -165,7 +165,7 @@ export function TechIUse() {
 
                 <div className="flex items-center gap-2 text-sm text-zinc-400">
                 <Braces className="h-4 w-4" />
-                <span>Pragmatic systems, customer-focused outcomes</span>
+                  <span>Use the right tool for the job</span>
               </div>
             </CardContent>
           </Card>

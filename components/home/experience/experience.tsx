@@ -11,23 +11,23 @@ const experienceItems = [
     label: "Current role",
     title: "Consultant at Netcompany",
     copy:
-      "Working mainly with Java Spring Boot, backend services, KPI-driven decisions, and architecture-focused delivery.",
+      "Working mainly with Java and Spring Boot, alongside backend services, KPIs, and architecture in a larger delivery team.",
     tags: ["Java", "Spring Boot", "Architecture", "KPIs"],
   },
   {
     icon: Layers3,
     label: "Solution delivery",
-    title: "Customer needs into technical execution",
+    title: "Working with customers and teams",
     copy:
-      "Translating stakeholder goals into clear technical plans, then delivering working solutions that balance speed, quality, and long-term maintainability.",
+      "Turning customer and stakeholder needs into technical work together with developers, designers, and other consultants.",
     tags: ["Discovery", "Planning", "Delivery", "Maintainability"],
   },
   {
     icon: Workflow,
     label: "How I work",
-    title: "End-to-end product ownership",
+    title: "From architecture to implementation",
     copy:
-      "Comfortable moving from system decisions to implementation details, making sure architecture, delivery, and real usage all support each other.",
+      "I contribute across system decisions and implementation details, depending on what the project and team need.",
     tags: ["Full-stack", "Product Thinking", "Delivery", "Maintainability"],
   },
 ]
@@ -56,7 +56,7 @@ export function Experience() {
                   variant="secondary"
                   className="bg-zinc-900/70 text-zinc-200 ring-1 ring-yellow-400/15"
                 >
-                  Customer-focused solution delivery
+                  Consultant at Netcompany
                 </Badge>
               </MotionReveal>
             </MotionStagger>
@@ -69,8 +69,8 @@ export function Experience() {
 
             <MotionReveal delay={0.14}>
               <p className="mt-2 max-w-2xl text-zinc-300">
-                I work across customer dialogue, architecture, implementation, and follow-through,
-                with a bias toward shipping solutions that are clear, useful, and maintainable.
+                My work sits between customer context, technical decisions, and implementation. The
+                exact mix changes from project to project.
               </p>
             </MotionReveal>
           </div>
@@ -132,8 +132,8 @@ export function Experience() {
                   <span className="text-sm font-medium">What that means in practice</span>
                 </div>
                 <p className="mt-3 text-sm leading-7 text-zinc-300">
-                  I can help define the problem, shape the solution, implement the system, and make
-                  sure what gets delivered actually works for the people using it.
+                  I contribute where the team needs me: understanding the context, making technical
+                  decisions, building software, and improving what is already there.
                 </p>
               </div>
 

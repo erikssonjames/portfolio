@@ -38,23 +38,23 @@ export function Hero() {
                       variant="secondary"
                       className="bg-zinc-900/70 text-zinc-200 ring-1 ring-yellow-400/15"
                     >
-                      Customer-first - End-to-end - Outcome-driven
+                      Consultant at Netcompany
                     </Badge>
                   </MotionReveal>
                 </MotionStagger>
 
                 <MotionReveal delay={0.08}>
                   <h1 className="mt-6 text-4xl font-semibold tracking-tight sm:text-5xl lg:text-6xl">
-                    I deliver{" "}
+                    I build{" "}
                     <span className="relative">
                       <span className="bg-linear-to-b from-yellow-200 via-yellow-300 to-yellow-500 bg-clip-text text-transparent">
-                        practical
+                        useful
                       </span>
                       <span className="absolute -inset-x-2 -inset-y-1 -z-10 rounded-lg bg-yellow-400/10 blur-md" />
                     </span>{" "}
-                    solutions with{" "}
+                    software with{" "}
                     <span className="bg-linear-to-r from-yellow-200 via-yellow-300 to-yellow-500 bg-clip-text text-transparent">
-                      customer focus
+                      a team
                     </span>
                     .
                   </h1>
@@ -62,9 +62,9 @@ export function Hero() {
 
                 <MotionReveal delay={0.14}>
                   <p className="mt-5 max-w-xl text-base leading-relaxed text-zinc-300 sm:text-lg">
-                    Fullstack consultant focused on understanding customer needs, shaping the right
-                    solution, and delivering reliable systems from architecture and backend to the
-                    final product experience.
+                    I&apos;m a consultant at Netcompany. This is a collection of projects I&apos;ve worked on
+                    at work and in my own time, with a focus on the code, tools, and decisions behind
+                    the finished result.
                   </p>
                 </MotionReveal>
 
@@ -128,7 +128,7 @@ export function Hero() {
                   </MotionReveal>
 
                   <div className="mt-4 flex flex-wrap gap-2">
-                    {["Customer Needs", "Architecture", "Backend", "Delivery", "Product Thinking"].map((item) => (
+                    {["Java", "Spring Boot", "Architecture", "KPIs", "React", "Next.js"].map((item) => (
                       <MotionReveal key={item} variants={revealItemVariants}>
                         <Badge
                           variant="outline"
@@ -156,10 +156,10 @@ export function Hero() {
                   <div className="flex items-start justify-between gap-4">
                     <div>
                       <p className="text-xs uppercase tracking-widest text-yellow-200/80">
-                        Why I could be a strong hire
+                        What I work with
                       </p>
                       <h2 className="mt-2 text-xl font-semibold text-zinc-100">
-                        Solution ownership from problem to delivery
+                        Backend, architecture, and product work
                       </h2>
                     </div>
                     <Badge className="bg-yellow-400 text-black">Now</Badge>
@@ -168,9 +168,8 @@ export function Hero() {
 
                 <MotionReveal delay={0.12}>
                   <p className="mt-4 text-sm leading-relaxed text-zinc-300">
-                    I work best where technical decisions need to stay grounded in real customer
-                    needs. The goal is to ship the full solution clearly and responsibly, not just
-                    one polished layer of it.
+                    My day-to-day work is mainly Java and Spring Boot, together with architecture,
+                    KPIs, and collaboration across a larger delivery team.
                   </p>
                 </MotionReveal>
 
@@ -178,9 +177,9 @@ export function Hero() {
                   <MotionReveal variants={revealItemVariants}>
                     <div className="grid gap-3 rounded-2xl border border-yellow-400/15 bg-black/25 p-4 sm:grid-cols-3">
                       {[
-                        { label: "Focus", value: "Customer value" },
-                        { label: "Strength", value: "Full-solution delivery" },
-                        { label: "Mode", value: "Pragmatic execution" },
+                        { label: "Role", value: "Consultant" },
+                        { label: "Main stack", value: "Java / Spring Boot" },
+                        { label: "Also", value: "Web & product work" },
                       ].map((item) => (
                         <div key={item.label}>
                           <p className="text-[11px] uppercase tracking-[0.18em] text-zinc-500">{item.label}</p>
@@ -195,8 +194,8 @@ export function Hero() {
                       <div>
                         <p className="text-[11px] uppercase tracking-[0.18em] text-zinc-500">Current focus</p>
                         <p className="mt-1 text-sm text-zinc-200">
-                          Helping teams define the right solution, align technical choices with
-                          customer outcomes, and deliver work end to end.
+                          Building useful things with other people and making the technical choices
+                          clear enough to maintain later.
                         </p>
                       </div>
                       <span className="h-2.5 w-2.5 rounded-full bg-yellow-300 shadow-[0_0_18px_rgba(250,204,21,0.7)]" />

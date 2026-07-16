@@ -10,18 +10,18 @@ export function AboutMe() {
   const highlights = [
     {
       icon: Zap,
-      title: "Delivery + quality",
-      desc: "Fast iterations with a high bar for maintainability, performance, and accessibility.",
+      title: "Steady delivery",
+      desc: "I like making useful progress while keeping maintainability, performance, and accessibility in view.",
     },
     {
       icon: Code2,
-      title: "Solution-oriented",
-      desc: "Architecture, priorities, and implementation choices tied to the real problem the customer needs solved.",
+      title: "Practical decisions",
+      desc: "I prefer clear tradeoffs and technology choices that fit the project instead of adding complexity for its own sake.",
     },
     {
       icon: Sparkles,
-      title: "End-to-end ownership",
-      desc: "Comfortable taking work from discovery and planning through implementation, rollout, and iteration.",
+      title: "Team contribution",
+      desc: "Comfortable contributing across architecture, implementation, and the everyday work of getting software shipped.",
     },
   ]
 
@@ -60,7 +60,7 @@ export function AboutMe() {
                   variant="secondary"
                   className="bg-zinc-900/70 text-zinc-200 ring-1 ring-yellow-400/15"
                 >
-                  Customer understanding - Delivery - Architecture
+                  Netcompany - Java/Spring Boot - Web projects
                 </Badge>
               </MotionReveal>
             </MotionStagger>
@@ -74,11 +74,9 @@ export function AboutMe() {
             <MotionReveal delay={0.14}>
               <p className="mt-2 max-w-2xl text-zinc-300">
                 I&apos;m a consultant at Netcompany, working mainly with{" "}
-                <span className="text-yellow-200">Java Spring Boot</span> and{" "}
-                <span className="text-yellow-200">KPI and architectural design</span>. I also
-                bring broad delivery experience, so I&apos;m comfortable owning work end to end,
-                from understanding stakeholder needs and shaping the solution to implementing and
-                refining what gets shipped.
+                <span className="text-yellow-200">Java and Spring Boot</span>, alongside{" "}
+                <span className="text-yellow-200">architecture and KPIs</span>. Outside work, I
+                build web projects to explore different products, stacks, and ways of working.
               </p>
             </MotionReveal>
           </div>
@@ -101,7 +99,7 @@ export function AboutMe() {
               <CardContent className="space-y-4 text-zinc-300">
                 <MotionReveal variants={revealItemVariants}>
                   <p className="leading-relaxed">
-                    Today I build backend services and platform features in{" "}
+                    In my day-to-day work I build backend services and platform features in{" "}
                     <span className="text-yellow-200">Java/Spring Boot</span>, with a focus on{" "}
                     <span className="text-yellow-200">architecture</span> and{" "}
                     <span className="text-yellow-200">measurable outcomes</span> like KPIs,
@@ -112,17 +110,15 @@ export function AboutMe() {
 
                 <MotionReveal variants={revealItemVariants}>
                   <p className="leading-relaxed">
-                    My approach starts with the customer problem and the context around it. That
-                    means asking the right questions early, aligning the solution with real needs,
-                    and avoiding unnecessary complexity before it enters the system.
+                    I work as part of a larger team, where the job can mean anything from clarifying
+                    a requirement to implementing a service or helping make an architectural choice.
                   </p>
                 </MotionReveal>
 
                 <MotionReveal variants={revealItemVariants}>
                   <p className="leading-relaxed">
-                    I enjoy collaborating across product, design, and engineering, translating goals
-                    into a scalable solution that is understandable, maintainable, and useful in
-                    practice.
+                    I enjoy the mix of technical depth and collaboration: making a decision, seeing
+                    it used in practice, and improving it when the context changes.
                   </p>
                 </MotionReveal>
 
@@ -152,11 +148,10 @@ export function AboutMe() {
 
                 <MotionReveal variants={revealItemVariants}>
                   <div className="rounded-xl border border-yellow-400/15 bg-black/30 p-4 shadow-[inset_0_0_18px_rgba(250,204,21,0.08)]">
-                    <p className="text-sm font-medium text-zinc-200">What I&apos;m looking for</p>
+                    <p className="text-sm font-medium text-zinc-200">Outside work</p>
                     <p className="mt-1 text-sm text-zinc-300">
-                      Projects where I can work closely with customers or stakeholders, shape the
-                      right technical approach, and carry the work through to a solution that
-                      creates real value.
+                      I use personal projects to try ideas, learn unfamiliar tools, and keep building
+                      things from scratch.
                     </p>
                   </div>
                 </MotionReveal>

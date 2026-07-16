@@ -177,7 +177,7 @@
   background:
     linear-gradient(135deg, color-mix(in oklab, var(--gol-alive) 4%, transparent) 1px, transparent 1px),
     var(--gol-dead);
-  background-size: 18px 18px;
+  background-size: var(--gol-cell-size, 10px) var(--gol-cell-size, 10px);
 }
 
 .gol-grid {
@@ -303,5 +303,330 @@
   .gol-intro-fill.is-loading {
     animation: none;
     width: 70%;
+  }
+}
+
+.gol-controls-positioner {
+  left: 0.5rem;
+  bottom: 0.5rem;
+  opacity: 0;
+  transform: translate3d(0, 0.8rem, 0) scale(0.97);
+  transition:
+    left 620ms cubic-bezier(0.2, 0.85, 0.2, 1),
+    bottom 620ms cubic-bezier(0.2, 0.85, 0.2, 1),
+    opacity 360ms ease,
+    transform 620ms cubic-bezier(0.2, 0.85, 0.2, 1);
+  will-change: left, bottom, opacity, transform;
+}
+
+.gol-controls-positioner.is-focus {
+  left: 50%;
+  bottom: 1.35rem;
+  transform: translate3d(-50%, 0.8rem, 0) scale(0.97);
+}
+
+.gol-controls-positioner.is-revealed.is-regular {
+  opacity: 1;
+  transform: translate3d(0, 0, 0) scale(1);
+}
+
+.gol-controls-positioner.is-revealed.is-focus {
+  opacity: 1;
+  transform: translate3d(-50%, 0, 0) scale(1);
+}
+
+.gol-control-dock {
+  display: flex;
+  align-items: center;
+  gap: 0.8rem;
+  padding: 0.55rem 0.65rem 0.55rem 0.8rem;
+  color: white;
+  border: 1px solid rgba(125, 211, 252, 0.22);
+  border-radius: 999px !important;
+  background:
+    linear-gradient(110deg, rgba(8, 22, 38, 0.94), rgba(17, 9, 37, 0.9)),
+    rgba(5, 12, 24, 0.92);
+  box-shadow:
+    0 16px 50px rgba(0, 0, 0, 0.42),
+    inset 0 1px 0 rgba(255, 255, 255, 0.08),
+    0 0 32px rgba(34, 211, 238, 0.08);
+  backdrop-filter: blur(18px);
+  transition:
+    gap 450ms ease,
+    padding 450ms ease,
+    border-color 450ms ease,
+    border-radius 520ms cubic-bezier(0.2, 0.85, 0.2, 1),
+    background 450ms ease,
+    box-shadow 450ms ease;
+}
+
+.gol-dock-brand,
+.gol-dock-actions,
+.gol-dock-hint {
+  display: flex;
+  align-items: center;
+}
+
+.gol-dock-brand {
+  gap: 0.45rem;
+  padding-right: 0.65rem;
+  color: #67e8f9;
+  font-family: var(--font-geist-mono), monospace;
+  font-size: 0.62rem;
+  font-weight: 700;
+  letter-spacing: 0.16em;
+  white-space: nowrap;
+}
+
+.gol-dock-actions {
+  gap: 0.35rem;
+}
+
+.gol-dock-hint {
+  gap: 0.35rem;
+  padding-left: 0.25rem;
+  color: rgba(255, 255, 255, 0.42);
+  font-family: var(--font-geist-mono), monospace;
+  font-size: 0.62rem;
+  white-space: nowrap;
+}
+
+.gol-dock-hint kbd {
+  display: inline-flex;
+  min-width: 1.15rem;
+  justify-content: center;
+  padding: 0.12rem 0.28rem;
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  border-radius: 0.3rem !important;
+  color: rgba(255, 255, 255, 0.8);
+  background: rgba(255, 255, 255, 0.08);
+}
+
+.gol-action-button,
+.gol-pattern-button {
+  border-color: rgba(255, 255, 255, 0.13) !important;
+  border-radius: 999px !important;
+  color: rgba(255, 255, 255, 0.8) !important;
+  background: rgba(255, 255, 255, 0.07) !important;
+  transition: 160ms ease;
+}
+
+.gol-action-button:hover,
+.gol-action-button:focus-visible {
+  border-color: rgba(103, 232, 249, 0.65) !important;
+  color: #a5f3fc !important;
+  background: rgba(34, 211, 238, 0.16) !important;
+  box-shadow: 0 0 20px rgba(34, 211, 238, 0.16);
+}
+
+.gol-pattern-button {
+  gap: 0.4rem;
+  padding-inline: 0.8rem;
+  border-color: rgba(167, 139, 250, 0.46) !important;
+  color: #f5d0fe !important;
+  background: linear-gradient(110deg, rgba(124, 58, 237, 0.46), rgba(219, 39, 119, 0.3)) !important;
+  box-shadow: 0 0 22px rgba(168, 85, 247, 0.16), inset 0 1px 0 rgba(255, 255, 255, 0.16);
+}
+
+.gol-pattern-button:hover,
+.gol-pattern-button:focus-visible {
+  border-color: rgba(244, 114, 182, 0.8) !important;
+  color: white !important;
+  background: linear-gradient(110deg, rgba(139, 92, 246, 0.72), rgba(236, 72, 153, 0.56)) !important;
+  box-shadow: 0 0 30px rgba(217, 70, 239, 0.28);
+}
+
+.gol-pattern-menu {
+  border: 1px solid rgba(192, 132, 252, 0.3) !important;
+  border-radius: 1.2rem !important;
+  background: linear-gradient(145deg, rgba(11, 18, 38, 0.98), rgba(30, 12, 48, 0.97)) !important;
+  box-shadow: 0 20px 70px rgba(0, 0, 0, 0.55), 0 0 36px rgba(168, 85, 247, 0.13) !important;
+  backdrop-filter: blur(22px);
+}
+
+.gol-pattern-item {
+  gap: 0.7rem !important;
+  margin: 0.18rem 0;
+  padding: 0.58rem 0.62rem !important;
+  border: 1px solid transparent;
+  border-radius: 0.8rem !important;
+  cursor: pointer !important;
+}
+
+.gol-pattern-item:hover,
+.gol-pattern-item:focus-visible {
+  border-color: rgba(255, 255, 255, 0.14);
+  background: rgba(255, 255, 255, 0.08) !important;
+}
+
+.gol-pattern-icon {
+  display: grid;
+  width: 2rem;
+  height: 2rem;
+  flex: 0 0 auto;
+  place-items: center;
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  border-radius: 0.65rem !important;
+  background: rgba(255, 255, 255, 0.07);
+}
+
+.gol-pattern-icon svg {
+  width: 1rem;
+  height: 1rem;
+}
+
+.gol-pattern-item-cyan .gol-pattern-icon { color: #67e8f9; background: rgba(34, 211, 238, 0.13); }
+.gol-pattern-item-violet .gol-pattern-icon { color: #c4b5fd; background: rgba(139, 92, 246, 0.15); }
+.gol-pattern-item-amber .gol-pattern-icon { color: #fcd34d; background: rgba(245, 158, 11, 0.15); }
+.gol-pattern-item-fuchsia .gol-pattern-icon { color: #f0abfc; background: rgba(217, 70, 239, 0.15); }
+.gol-pattern-item-emerald .gol-pattern-icon { color: #6ee7b7; background: rgba(16, 185, 129, 0.15); }
+
+.gol-pattern-dot {
+  width: 0.75rem !important;
+  height: 0.75rem !important;
+  margin-left: auto;
+  color: rgba(255, 255, 255, 0.23);
+}
+
+.gol-control-dock.is-regular {
+  gap: 0.65rem;
+  padding: 0.45rem 0.55rem 0.45rem 0.65rem;
+  border-color: color-mix(in oklab, var(--primary) 44%, transparent);
+  border-radius: 0 !important;
+  background: rgba(8, 17, 25, 0.9);
+  box-shadow:
+    7px 7px 0 color-mix(in oklab, var(--primary) 18%, transparent),
+    inset 0 1px 0 rgba(255, 255, 255, 0.05);
+}
+
+.gol-control-dock.is-regular .gol-dock-brand {
+  color: var(--primary);
+}
+
+.gol-control-dock.is-regular .gol-action-button,
+.gol-control-dock.is-regular .gol-pattern-button,
+.gol-control-dock.is-regular .gol-dock-hint kbd,
+.gol-control-dock.is-regular button {
+  border-radius: 0 !important;
+}
+
+.gol-control-dock.is-regular .gol-action-button:hover,
+.gol-control-dock.is-regular .gol-action-button:focus-visible {
+  border-color: color-mix(in oklab, var(--primary) 72%, transparent) !important;
+  color: var(--primary) !important;
+  background: color-mix(in oklab, var(--primary) 14%, transparent) !important;
+  box-shadow: none;
+}
+
+.gol-control-dock.is-regular .gol-pattern-button {
+  border-color: color-mix(in oklab, var(--primary) 62%, transparent) !important;
+  color: var(--primary-foreground) !important;
+  background: var(--primary) !important;
+  box-shadow: none;
+}
+
+.gol-control-dock.is-regular .gol-pattern-button:hover,
+.gol-control-dock.is-regular .gol-pattern-button:focus-visible {
+  border-color: color-mix(in oklab, var(--primary) 76%, white) !important;
+  color: var(--primary-foreground) !important;
+  background: color-mix(in oklab, var(--primary) 86%, white) !important;
+  box-shadow: 4px 4px 0 color-mix(in oklab, var(--primary) 24%, transparent);
+}
+
+.gol-control-dock.is-focus {
+  gap: 0.9rem;
+  padding: 0.65rem 0.78rem 0.65rem 0.95rem;
+  border-radius: 999px !important;
+  animation: gol-focus-dock-arrive 620ms cubic-bezier(0.2, 0.85, 0.2, 1);
+}
+
+.gol-control-dock.is-focus .gol-dock-actions {
+  gap: 0.45rem;
+}
+
+.gol-control-dock.is-focus button,
+.gol-control-dock.is-focus .gol-action-button,
+.gol-control-dock.is-focus .gol-pattern-button {
+  border-radius: 999px !important;
+}
+
+.gol-pattern-menu.is-regular-menu,
+.gol-pattern-menu.is-regular-menu .gol-pattern-item,
+.gol-pattern-menu.is-regular-menu .gol-pattern-icon {
+  border-radius: 0 !important;
+}
+
+.gol-pattern-menu.is-focus-menu,
+.gol-pattern-menu.is-focus-menu .gol-pattern-item,
+.gol-pattern-menu.is-focus-menu .gol-pattern-icon {
+  transition: border-radius 420ms ease, background-color 180ms ease;
+}
+
+.gol-settings-menu.is-focus-menu [class*="rounded-"] {
+  border-radius: 0.9rem !important;
+}
+
+.gol-settings-menu.is-focus-menu button {
+  border-radius: 0.7rem !important;
+}
+
+.gol-canvas {
+  transition: filter 520ms ease, opacity 520ms ease;
+}
+
+.gol-grid-shell.is-focus .gol-canvas {
+  filter: saturate(1.16) brightness(1.06);
+  animation: gol-field-focus 620ms ease-out;
+}
+
+@keyframes gol-focus-dock-arrive {
+  0% {
+    opacity: 0.72;
+    transform: scale(0.92);
+  }
+
+  65% {
+    opacity: 1;
+    transform: scale(1.035);
+  }
+
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes gol-field-focus {
+  from {
+    opacity: 0.72;
+    filter: saturate(0.7) brightness(0.84);
+  }
+
+  to {
+    opacity: 1;
+    filter: saturate(1.16) brightness(1.06);
+  }
+}
+
+@media (max-width: 700px) {
+  .gol-controls-positioner,
+  .gol-controls-positioner.is-focus {
+    max-width: calc(100vw - 1rem);
+  }
+
+  .gol-control-dock {
+    max-width: calc(100vw - 1rem);
+    gap: 0.45rem;
+    padding-left: 0.55rem;
+  }
+
+  .gol-dock-brand,
+  .gol-dock-hint {
+    display: none;
+  }
+
+  .gol-dock-actions {
+    width: 100%;
+    justify-content: space-between;
   }
 }

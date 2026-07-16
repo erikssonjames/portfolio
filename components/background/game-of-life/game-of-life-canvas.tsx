@@ -2,7 +2,7 @@
 
 import { CSSProperties, useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { drawVignette, parseRgb, rgbToStr, stampSparseDisc } from "./lib/canvas";
-import { randomize, step } from "./lib/gol";
+import { randomize, stampPattern, step } from "./lib/gol";
 import { useGol } from "./gol-context";
 
 type GridDims = {
@@ -16,10 +16,21 @@ const MAX_DPR = 1.5;
 type IntroStage = "dead" | "loading" | "revealed";
 
 export function GameOfLifeCanvas({ introStage = "revealed" }: { introStage?: IntroStage }) {
-  const { isPlaying, restartToken, randomizeToken, settings, updateLocalDeaths, updateLocalRebirths } = useGol();
+  const {
+    isPlaying,
+    restartToken,
+    randomizeToken,
+    clearToken,
+    patternId,
+    patternToken,
+    isImmersive,
+    settings,
+    updateLocalDeaths,
+    updateLocalRebirths,
+  } = useGol();
 
   const [baseColors, setBaseColors] = useState({
-    aliveCss: "rgb(205,119,71)",
+    aliveCss: "rgb(218,126,72)",
     deadCss: "rgb(8,17,25)",
   });
   const introStageRef = useRef<IntroStage>(introStage);
@@ -50,14 +61,22 @@ export function GameOfLifeCanvas({ introStage = "revealed" }: { introStage?: Int
   const probeClasses = useMemo(
     () => ({
       dead: "bg-slate-950",
-      alive: "bg-orange-300",
+      alive: "bg-primary",
     }),
     []
   );
 
   const themeColors = useMemo(() => {
-    const baseAlive = parseRgb(baseColors.aliveCss) ?? { r: 205, g: 119, b: 71 };
+    const baseAlive = parseRgb(baseColors.aliveCss) ?? { r: 218, g: 126, b: 72 };
     const baseDead = parseRgb(baseColors.deadCss) ?? { r: 8, g: 17, b: 25 };
+
+    if (isImmersive) {
+      return {
+        alive: "rgb(91,226,255)",
+        dead: "rgb(4,12,28)",
+        glowBlur: 0,
+      };
+    }
 
     if (settings.theme === "classic") {
       return {
@@ -76,11 +95,11 @@ export function GameOfLifeCanvas({ introStage = "revealed" }: { introStage?: Int
     }
 
     return {
-      alive: "rgb(112,157,173)",
-      dead: "rgb(8,17,25)",
+      alive: "rgb(91,226,255)",
+      dead: "rgb(4,12,28)",
       glowBlur: 0,
     };
-  }, [baseColors.aliveCss, baseColors.deadCss, settings]);
+  }, [baseColors.aliveCss, baseColors.deadCss, isImmersive, settings]);
 
   const renderBoard = useCallback(() => {
     const canvas = canvasRef.current;
@@ -270,6 +289,32 @@ export function GameOfLifeCanvas({ introStage = "revealed" }: { introStage?: Int
   }, [randomizeBoard, randomizeToken]);
 
   useEffect(() => {
+    if (!clearToken) return;
+
+    const { cols, rows } = dimsRef.current;
+    if (!cols || !rows) return;
+
+    boardRef.current = new Uint8Array(cols * rows);
+    nextBoardRef.current = new Uint8Array(cols * rows);
+    protectionRef.current = new Uint8Array(cols * rows);
+    renderBoard();
+  }, [clearToken, renderBoard]);
+
+  useEffect(() => {
+    if (!patternToken) return;
+
+    const { cols, rows } = dimsRef.current;
+    if (!cols || !rows) return;
+
+    const next = new Uint8Array(cols * rows);
+    stampPattern(next, cols, rows, patternId);
+    boardRef.current = next;
+    nextBoardRef.current = new Uint8Array(next.length);
+    protectionRef.current = new Uint8Array(next.length);
+    renderBoard();
+  }, [patternId, patternToken, renderBoard]);
+
+  useEffect(() => {
     const { cols, rows } = dimsRef.current;
     if (!cols || !rows || !boardRef.current.length) return;
 
@@ -338,12 +383,13 @@ export function GameOfLifeCanvas({ introStage = "revealed" }: { introStage?: Int
   return (
     <div
       ref={containerRef}
-      className="gol-grid-shell relative size-full overflow-hidden"
+      className={`gol-grid-shell relative size-full overflow-hidden ${isImmersive ? "is-focus" : "is-regular"}`}
       style={
         {
           "--gol-alive": themeColors.alive,
           "--gol-dead": themeColors.dead,
           "--gol-glow-size": `${themeColors.glowBlur}px`,
+          "--gol-cell-size": `${settings.cellSize}px`,
         } as CSSProperties
       }
     >

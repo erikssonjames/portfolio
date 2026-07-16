@@ -29,9 +29,9 @@ export type GolSettings = {
 }
 
 export const DEFAULT_GOL_SETTINGS: GolSettings = {
-  backgroundOpacity: 25,
-  cellSize: 30,
-  tickMs: 300,
+  backgroundOpacity: 85,
+  cellSize: 10,
+  tickMs: 180,
   randomFill: 0.5,
   showVignette: true,
   glowStrength: 10,
@@ -200,9 +200,9 @@ export function GameOfLifeSettingsPanel({
                 value={value.tickMs}
                 onChange={(tickMs) => set({ tickMs })}
                 options={[
-                  { label: "Slow", value: 420 },
-                  { label: "Med", value: 300 },
-                  { label: "Fast", value: 180 },
+                  { label: "Slow", value: 360 },
+                  { label: "Med", value: 180 },
+                  { label: "Fast", value: 90 },
                 ]}
               />
             </MiniField>
@@ -212,9 +212,9 @@ export function GameOfLifeSettingsPanel({
                 value={value.cellSize}
                 onChange={(cellSize) => set({ cellSize })}
                 options={[
-                  { label: "18", value: 18 },
-                  { label: "30", value: 30 },
-                  { label: "42", value: 42 },
+                  { label: "8", value: 8 },
+                  { label: "10", value: 10 },
+                  { label: "14", value: 14 },
                 ]}
               />
             </MiniField>

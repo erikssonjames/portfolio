@@ -3,6 +3,7 @@
 import React, { createContext, useCallback, useContext, useEffect, useMemo, useRef, useState } from "react";
 import { parseStatisticValue } from "@/lib/large-number";
 import { DEFAULT_GOL_SETTINGS } from "./game-of-life-settings";
+import type { GolPatternId } from "./lib/gol";
 
 type GolSettings = typeof DEFAULT_GOL_SETTINGS;
 
@@ -13,8 +14,16 @@ type GolApi = {
   setIsPlaying: React.Dispatch<React.SetStateAction<boolean>>;
   restartToken: number;     // increment to signal restart
   randomizeToken: number;   // increment to signal randomize
+  clearToken: number;
   requestRestart: () => void;
   requestRandomize: () => void;
+  requestClear: () => void;
+  patternId: GolPatternId;
+  patternToken: number;
+  requestPattern: (patternId: GolPatternId) => void;
+  isImmersive: boolean;
+  setIsImmersive: React.Dispatch<React.SetStateAction<boolean>>;
+  toggleImmersive: () => void;
   localDeaths: bigint,
   localRebirths: bigint,
   updateLocalDeaths: (deaths: number) => void,
@@ -40,6 +49,10 @@ export function GolProvider({ children }: { children: React.ReactNode }) {
   const [isPlaying, setIsPlaying] = useState(true);
   const [restartToken, setRestartToken] = useState(0);
   const [randomizeToken, setRandomizeToken] = useState(0);
+  const [clearToken, setClearToken] = useState(0);
+  const [patternId, setPatternId] = useState<GolPatternId>("glider");
+  const [patternToken, setPatternToken] = useState(0);
+  const [isImmersive, setIsImmersive] = useState(false);
 
   const updateLocalDeaths = useCallback((deaths: number) => {
     setLocalDeaths(prev => prev + parseStatisticValue(deaths));
@@ -47,6 +60,16 @@ export function GolProvider({ children }: { children: React.ReactNode }) {
   const updateLocalRebirths = useCallback((rebirths: number) => {
     setLocalRebirths(prev => prev + parseStatisticValue(rebirths));
   }, [])
+
+  const requestRestart = useCallback(() => setRestartToken((token) => token + 1), []);
+  const requestRandomize = useCallback(() => setRandomizeToken((token) => token + 1), []);
+  const requestClear = useCallback(() => setClearToken((token) => token + 1), []);
+  const requestPattern = useCallback((nextPattern: GolPatternId) => {
+    setPatternId(nextPattern);
+    setPatternToken((token) => token + 1);
+    setIsPlaying(true);
+  }, []);
+  const toggleImmersive = useCallback(() => setIsImmersive((value) => !value), []);
 
   useEffect(() => {
     async function uploadLocalData() {
@@ -85,8 +108,16 @@ export function GolProvider({ children }: { children: React.ReactNode }) {
     setIsPlaying,
     restartToken,
     randomizeToken,
-    requestRestart: () => setRestartToken((t) => t + 1),
-    requestRandomize: () => setRandomizeToken((t) => t + 1),
+    clearToken,
+    requestRestart,
+    requestRandomize,
+    requestClear,
+    patternId,
+    patternToken,
+    requestPattern,
+    isImmersive,
+    setIsImmersive,
+    toggleImmersive,
     localDeaths,
     localRebirths,
     updateLocalDeaths,
@@ -96,6 +127,15 @@ export function GolProvider({ children }: { children: React.ReactNode }) {
     isPlaying,
     restartToken,
     randomizeToken,
+    clearToken,
+    requestRestart,
+    requestRandomize,
+    requestClear,
+    patternId,
+    patternToken,
+    requestPattern,
+    isImmersive,
+    toggleImmersive,
     localDeaths,
     localRebirths,
     updateLocalDeaths,

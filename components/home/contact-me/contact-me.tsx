@@ -50,8 +50,7 @@ export function ContactMe() {
 
             <MotionReveal delay={0.14}>
               <p className="mt-2 max-w-xl text-zinc-300">
-                Send a message if you&apos;d like to talk about a role, a team, or the kind of
-                problems I can help solve. You can also reach out directly by email or LinkedIn.
+                Use the form below to get in touch, or reach out directly by email or LinkedIn.
               </p>
             </MotionReveal>
           </div>
@@ -139,9 +138,6 @@ export function ContactMe() {
                   <div className="rounded-xl border border-yellow-400/15 bg-black/30 p-4">
                     <p className="font-medium text-zinc-200">Typical response time</p>
                     <p className="mt-1 text-zinc-300">Within 1-2 business days.</p>
-                    <p className="mt-1 text-xs text-zinc-400">
-                      Add your timezone and availability here if you want.
-                    </p>
                   </div>
                 </MotionReveal>
               </CardContent>

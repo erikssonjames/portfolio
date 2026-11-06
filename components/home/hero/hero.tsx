@@ -26,15 +26,6 @@ export function Hero() {
                 <MotionStagger className="flex flex-wrap items-center gap-2">
                   <MotionReveal variants={revealItemVariants}>
                     <Badge
-                      variant="outline"
-                      className="border-yellow-400/50 bg-yellow-400/10 text-yellow-200 shadow-[0_0_18px_rgba(250,204,21,0.25)]"
-                    >
-                      Open to new opportunities
-                    </Badge>
-                  </MotionReveal>
-
-                  <MotionReveal variants={revealItemVariants}>
-                    <Badge
                       variant="secondary"
                       className="bg-zinc-900/70 text-zinc-200 ring-1 ring-yellow-400/15"
                     >
